@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class Drone : MonoBehaviour
@@ -8,19 +9,60 @@ public class Drone : MonoBehaviour
     public GameObject Gear;
     public float moveSpeed = 3f;
 
+    private float attackRange = 0.3f;
+    public float attackCooldown = 3f;
+    private bool isAttacking = false;
+    private float attackTimer;
+
+    private Rigidbody2D rb;
+
+    Car car;
+
     private void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        isAttacking = false;
+        car = player.GetComponent<Car>();
     }
+
     private void Update()
     {
-        if (player != null)
+        float distanceToPlayer = Vector2.Distance(player.position, transform.position);
+
+        if (player != null && distanceToPlayer > 0.2f)
         {
             Vector3 dir = (player.position - transform.position).normalized;
-            transform.position += moveSpeed * Time.deltaTime * dir;
 
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle + 90));
+            rb.rotation = angle + 90f;
+
+            rb.velocity = dir * moveSpeed;
+        }
+        else
+        {
+            rb.velocity = Vector2.zero;
+        }
+
+        if (distanceToPlayer <= attackRange && !car.isInAttackMode)
+        {
+            isAttacking = true;
+        }    
+        else
+        {
+            isAttacking = false;
+            attackTimer = 0f;
+        }
+
+        if (isAttacking)
+        {
+            attackTimer += Time.deltaTime;
+
+            if (attackTimer >= attackCooldown)
+            {
+                car.carHealth -= 1;
+                attackTimer = 0f;
+            }
         }
     }
 
@@ -28,13 +70,16 @@ public class Drone : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            if (collision.gameObject.GetComponent<Car>().isInAttackMode)
+            if (car.isInAttackMode && car.isDrifting && Mathf.Abs(car.turnInput) > 0.5f)
             {
+                car.DriftSpeedBoost();
                 Destroy(gameObject);
                 Instantiate(Gear, transform.position, transform.rotation);
             }
             else
-                Debug.Log("Damaged Car");
+            {
+                car.carHealth -= 1;
+            }
         }
     }
 }

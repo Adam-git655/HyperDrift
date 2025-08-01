@@ -1,13 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class Car : MonoBehaviour
 {
+    public float carHealth = 100f;
+    public Slider HealthBarSlider;
+
+    public ParticleSystem ElectricShockFx;
+
+    public Text GearsCountText;
+    public int gears = 0;
+
     public float maxSpeed = 10f;
     public float accelerationTime = 1f;
     public float friction = 1.2f;
     public float rotateDegreesPerSec = 220f;
+    private bool canMove = true;
+
+    public float turnInput;
 
     public float driftMaxAngle = 60f;
     public float driftAngleBuildSpeed = 10f;
@@ -18,12 +31,15 @@ public class Car : MonoBehaviour
     private float currentDriftSpeed = 1.0f;
 
     public bool isInAttackMode = false;
-    public float attackModeDuration = 3f;
+    public float attackModeDuration = 8f;
     private float attackModeTimer = 0f;
+    public GameObject shieldAuraVfx;
 
+    public bool isDrifting = false;
+    public Slider driftMeterSlider;
     private float driftChargeMeter = 0f;
     private float maxDriftCharge = 100f;
-    private float driftChargePerSecond = 20f;
+    private float driftChargePerSecond = 25f;
 
     public float trackSegLength = .15f;
     public int trackSegCount = 100;
@@ -39,6 +55,7 @@ public class Car : MonoBehaviour
     void Start()
     {
         m_RigidBody = GetComponent<Rigidbody2D>();
+        driftMeterSlider.maxValue = maxDriftCharge;
         m_VelDir = new GameObject("VelocityDirection").transform;
         m_VelDir.parent = transform;
         m_VelDir.localPosition = Vector3.zero;
@@ -51,11 +68,21 @@ public class Car : MonoBehaviour
             wheel.Init(wheels[i], trailMaterial, trackSegCount);
             m_WheelTracks.Add(wheel);
         }
+        ElectricShockFx.Pause();
+        ElectricShockFx.gameObject.SetActive(false);
     }
 
     void Update()
     {
-        float throttle = Input.GetKey(KeyCode.W) ? 1f : 0f;
+        HealthBarSlider.value = carHealth;
+        if (carHealth <= 0f)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        GearsCountText.text = gears.ToString();
+
+        float throttle = Input.GetKey(KeyCode.W) && canMove ? 1f : 0f;
 
         if (throttle > 0f)
         {
@@ -71,8 +98,8 @@ public class Car : MonoBehaviour
         if (m_AppliedSpeed < .5f)
             m_VelDir.localEulerAngles = Vector3.zero;
 
-        float turnInput = Input.GetAxisRaw("Horizontal");
-        bool isDrifting = Input.GetKey(KeyCode.LeftShift);
+        turnInput = canMove ? Input.GetAxisRaw("Horizontal") : 0f;
+        isDrifting = Input.GetKey(KeyCode.LeftShift) && canMove;
 
         float zVal = transform.eulerAngles.z;
 
@@ -109,9 +136,12 @@ public class Car : MonoBehaviour
             currentDriftSpeed = Mathf.Lerp(currentDriftSpeed, 1f, Time.deltaTime * driftSpeedDecay);
         }
 
+        driftMeterSlider.value = driftChargeMeter;
+
         if (driftChargeMeter >= maxDriftCharge && !isInAttackMode)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            driftMeterSlider.fillRect.GetComponent<Image>().color = Color.cyan;
+            if (Input.GetKeyDown(KeyCode.Space) && canMove)
             {
                 ActivateAttackMode();
             }
@@ -120,11 +150,19 @@ public class Car : MonoBehaviour
         if (isInAttackMode)
         {
             attackModeTimer -= Time.deltaTime;
+            driftChargeMeter = (attackModeTimer / attackModeDuration) * 100f;
             if (attackModeTimer <= 0f)
             {
                 isInAttackMode = false;
+                driftChargeMeter = 0f;
+                driftMeterSlider.fillRect.GetComponent<Image>().color = Color.gray;
+                shieldAuraVfx.SetActive(false);
                 Debug.Log("ATTACK MODE DISABLED :(");
             }
+        }
+        else
+        {
+            maxDriftSpeed = 1f;
         }
 
         currentDriftSpeed = Mathf.Clamp(currentDriftSpeed, 1.0f, maxDriftSpeed);
@@ -153,13 +191,34 @@ public class Car : MonoBehaviour
         }
     }
 
+    public void DriftSpeedBoost()
+    {
+        maxDriftSpeed += 0.1f;
+    }
+
     private void ActivateAttackMode()
     {
         isInAttackMode = true;
+        shieldAuraVfx.SetActive(true);
         attackModeTimer = attackModeDuration;
-        driftChargeMeter = 0f;
-
         Debug.Log("ATTACK MODE BABY");
+    }
+
+    public void GetElectrocuted()
+    {
+        canMove = false;
+        carHealth -= 5;
+        ElectricShockFx.gameObject.SetActive(true);
+        ElectricShockFx.Play();
+        StartCoroutine(RegainControlsAfterElectricShock());
+    }
+
+    IEnumerator RegainControlsAfterElectricShock()
+    {
+        yield return new WaitForSeconds(2f);
+        ElectricShockFx.gameObject.SetActive(false);
+        ElectricShockFx.Pause();
+        canMove = true;
     }
 
     private void FixedUpdate()

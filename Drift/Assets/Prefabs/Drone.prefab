@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6254208794333991634}
   m_Layer: 0
   m_Name: Drone
-  m_TagString: Enemy
+  m_TagString: Drone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -102,6 +102,7 @@ MonoBehaviour:
   player: {fileID: 0}
   Gear: {fileID: 5398001549116259696, guid: 47312e94c54f46e4d932d29de427f790, type: 3}
   moveSpeed: 4
+  canMoveTowardsPlayer: 1
 --- !u!58 &5181825810760088097
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -134,9 +135,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.0096066, y: 0.044190288}
+  m_Offset: {x: -0.00912419, y: 0.044190228}
   serializedVersion: 2
-  m_Radius: 0.32000017
+  m_Radius: 0.35090086
 --- !u!50 &6254208794333991634
 Rigidbody2D:
   serializedVersion: 4
