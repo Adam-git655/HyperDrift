@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.UI;
 using UnityEngine;
 
 public class Drone : MonoBehaviour
@@ -9,6 +8,10 @@ public class Drone : MonoBehaviour
     public GameObject Gear;
     public float moveSpeed = 3f;
 
+    private void Start()
+    {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+    }
     private void Update()
     {
         if (player != null)
@@ -25,8 +28,13 @@ public class Drone : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            Destroy(gameObject);
-            Instantiate(Gear, transform.position, transform.rotation);
+            if (collision.gameObject.GetComponent<Car>().isInAttackMode)
+            {
+                Destroy(gameObject);
+                Instantiate(Gear, transform.position, transform.rotation);
+            }
+            else
+                Debug.Log("Damaged Car");
         }
     }
 }
