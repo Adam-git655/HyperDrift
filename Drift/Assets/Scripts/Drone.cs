@@ -70,7 +70,7 @@ public class Drone : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            if (car.isInAttackMode && car.isDrifting && Mathf.Abs(car.turnInput) > 0.5f)
+            if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 75f))
             {
                 car.DriftSpeedBoost();
                 Destroy(gameObject);
@@ -78,7 +78,7 @@ public class Drone : MonoBehaviour
             }
             else
             {
-                car.carHealth -= 1;
+                car.carHealth -= 1.5f;
             }
         }
     }

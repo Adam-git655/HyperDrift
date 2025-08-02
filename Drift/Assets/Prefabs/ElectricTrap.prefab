@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2028026754883555841}
   - component: {fileID: 4537683908119068459}
   - component: {fileID: 3321836389439181763}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ElectricTrap
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
