@@ -52,6 +52,9 @@ public class Car : MonoBehaviour
     private List<WheelTrack> m_WheelTracks;
     private Vector3 m_LastPos;
 
+    public Sprite BlueEnergyBarSprite;
+    public Sprite GreyEnergyBarSprite;
+
     void Start()
     {
         m_RigidBody = GetComponent<Rigidbody2D>();
@@ -140,7 +143,7 @@ public class Car : MonoBehaviour
 
         if (driftChargeMeter >= maxDriftCharge && !isInAttackMode)
         {
-            driftMeterSlider.fillRect.GetComponent<Image>().color = Color.cyan;
+            driftMeterSlider.fillRect.GetComponent<Image>().sprite = BlueEnergyBarSprite;
             if (Input.GetKeyDown(KeyCode.Space) && canMove)
             {
                 ActivateAttackMode();
@@ -155,7 +158,7 @@ public class Car : MonoBehaviour
             {
                 isInAttackMode = false;
                 driftChargeMeter = 0f;
-                driftMeterSlider.fillRect.GetComponent<Image>().color = Color.gray;
+                driftMeterSlider.fillRect.GetComponent<Image>().sprite = GreyEnergyBarSprite;
                 shieldAuraVfx.SetActive(false);
                 Debug.Log("ATTACK MODE DISABLED :(");
             }
