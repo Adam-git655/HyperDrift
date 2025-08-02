@@ -211,5 +211,5 @@ MonoBehaviour:
     type: 3}
   rotationSpeed: 150
   lockOnTime: 1.5
-  burstCount: 5
-  burstInterval: 0.2
+  burstCount: 4
+  burstInterval: 0.3

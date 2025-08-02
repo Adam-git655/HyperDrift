@@ -22,6 +22,9 @@ public class EnemySpawnType
 public class EnemySpawner : MonoBehaviour
 {
     public List<EnemySpawnType> enemyTypes = new List<EnemySpawnType>();
+    public GameObject miniBossPrefab;
+    public float miniBossSpawnTime;
+    private bool canSpawnMiniBoss = true;
     public Rect spawnableArea;
     private Camera mainCam;
 
@@ -65,6 +68,13 @@ public class EnemySpawner : MonoBehaviour
                 SpawnEnemy(enemy);
                 enemy.spawnTimer = enemy.currentSpawnInterval;
             }
+        }
+
+        if (elapsedTime >= miniBossSpawnTime && canSpawnMiniBoss)
+        {
+            Vector2 spawnPos = GetRandomPointOutsideCamView(-1f);
+            Instantiate(miniBossPrefab, spawnPos, Quaternion.identity);
+            canSpawnMiniBoss = false;
         }
     }
 

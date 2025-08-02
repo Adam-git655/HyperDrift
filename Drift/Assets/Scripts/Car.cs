@@ -191,11 +191,6 @@ public class Car : MonoBehaviour
         }
     }
 
-    public void DriftSpeedBoost()
-    {
-        maxDriftSpeed += 0.1f;
-    }
-
     private void ActivateAttackMode()
     {
         isInAttackMode = true;

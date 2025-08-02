@@ -88,9 +88,8 @@ public class Tank : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 75f))
+            if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
             {
-                car.DriftSpeedBoost();
                 Destroy(gameObject);
                 Instantiate(Gear, transform.position, Quaternion.identity);
             }

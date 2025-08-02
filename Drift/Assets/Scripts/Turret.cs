@@ -57,9 +57,8 @@ public class Turret : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             Car car = collision.GetComponent<Car>();
-            if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 75f))
+            if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
             {
-                car.DriftSpeedBoost();
                 Destroy(gameObject);
                 Instantiate(gearPrefab, transform.position, transform.rotation);
             }
