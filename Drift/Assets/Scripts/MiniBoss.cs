@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MiniBoss : MonoBehaviour
 {
     public Transform player;
     public GameObject bulletPrefab;
     public GameObject gearPrefab;
+    public AudioSource bulletSound;
 
     public int health = 10;
+    public Slider healthBarSlider;
 
     public float timeBetweenPatterns = 2.0f;
     public int radialBulletCount = 16;
@@ -27,6 +30,10 @@ public class MiniBoss : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         car = player.GetComponent<Car>();
 
+        healthBarSlider = GameObject.Find("Canvas").transform.GetChild(4).GetComponent<Slider>();
+        healthBarSlider.gameObject.SetActive(true);
+        healthBarSlider.maxValue = health;
+
         StartCoroutine(AttackPatternLoop());
     }
 
@@ -43,6 +50,7 @@ public class MiniBoss : MonoBehaviour
     {
         for (int i = 0; i < radialBulletCount; i++)
         {
+            bulletSound.Play();
             float angle = i * (360f / radialBulletCount);
             Quaternion rotation = Quaternion.Euler(0, 0, angle);
             Instantiate(bulletPrefab, transform.position, rotation);
@@ -53,9 +61,11 @@ public class MiniBoss : MonoBehaviour
     {
         float distanceToPlayer = Vector2.Distance(player.position, transform.position);
 
+        healthBarSlider.value = health;
         if (health <= 0)
         {
             Destroy(gameObject);
+            healthBarSlider.gameObject.SetActive(false);
             for (int i = 0; i < 10; i++)
                 Instantiate(gearPrefab, transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), transform.position.z), transform.rotation);
         }

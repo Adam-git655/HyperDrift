@@ -219,6 +219,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   Gear: {fileID: 5398001549116259696, guid: 47312e94c54f46e4d932d29de427f790, type: 3}
+  hitSound: {fileID: 0}
   moveSpeed: 2
   chargeSpeed: 10
   chargeCooldown: 3

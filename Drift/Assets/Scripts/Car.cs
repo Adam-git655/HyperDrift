@@ -3,10 +3,24 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.Tilemaps;
+
+public static class Globals
+{
+    public static float maxCarHealth = 100.0f;
+    public static float attackModeDuration = 10f;
+    public static int totalGears = 0;
+}
 
 public class Car : MonoBehaviour
 {
     public float carHealth = 100f;
+
+    public GameObject GameOverPanel;
+    public Text timeSurvivedCount;
+    public Text gearsCollectedCount;
+    public Tilemap tilemap;
+
     public Slider HealthBarSlider;
 
     public ParticleSystem ElectricShockFx;
@@ -31,7 +45,6 @@ public class Car : MonoBehaviour
     private float currentDriftSpeed = 1.0f;
 
     public bool isInAttackMode = false;
-    public float attackModeDuration = 8f;
     private float attackModeTimer = 0f;
     public GameObject shieldAuraVfx;
 
@@ -55,9 +68,25 @@ public class Car : MonoBehaviour
     public Sprite BlueEnergyBarSprite;
     public Sprite GreyEnergyBarSprite;
 
+    public AudioSource EngineAudioSource;
+    public AudioSource DriftAudioSource;
+
+    private bool isGameOver = false;
+
+    [Header("Mobile Controls")]
+    public bool useMobileControls = false;
+    public float mobileThrottle = 0f;
+    public float mobileSteer = 0f;
+    public bool mobileDrift = false;
+    public bool mobileAttackMode = false;
+
     void Start()
     {
+        Time.timeScale = 1.0f;
+        isGameOver = false;
         m_RigidBody = GetComponent<Rigidbody2D>();
+        HealthBarSlider.maxValue = Globals.maxCarHealth;
+        carHealth = Globals.maxCarHealth;
         driftMeterSlider.maxValue = maxDriftCharge;
         m_VelDir = new GameObject("VelocityDirection").transform;
         m_VelDir.parent = transform;
@@ -73,22 +102,47 @@ public class Car : MonoBehaviour
         }
         ElectricShockFx.Pause();
         ElectricShockFx.gameObject.SetActive(false);
+        GameOverPanel.SetActive(false);
     }
 
     void Update()
     {
         HealthBarSlider.value = carHealth;
-        if (carHealth <= 0f)
+
+        if (carHealth <= 0f && !isGameOver)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            isGameOver = true;
+            GameOverPanel.SetActive(true);
+            tilemap.color = Color.gray;
+            Globals.totalGears += gears;
+            int minutes = Mathf.FloorToInt(Time.timeSinceLevelLoad / 60f);
+            int seconds = Mathf.FloorToInt(Time.timeSinceLevelLoad % 60f);
+            timeSurvivedCount.text = $"{minutes}m {seconds}s";
+            gearsCollectedCount.text = gears.ToString();
+            Time.timeScale = 0f;
         }
 
         GearsCountText.text = gears.ToString();
 
-        float throttle = Input.GetKey(KeyCode.W) && canMove ? 1f : 0f;
+
+        float throttle;
+        if (useMobileControls)
+        {
+            throttle = canMove ? mobileThrottle : 0f;
+            turnInput = canMove ? mobileSteer : 0f;
+            isDrifting = canMove && mobileDrift;
+        }
+        else
+        {
+            throttle = Input.GetKey(KeyCode.W) && canMove ? 1f : 0f;
+            turnInput = canMove ? Input.GetAxisRaw("Horizontal") : 0f;
+            isDrifting = Input.GetKey(KeyCode.LeftShift) && canMove;
+        }
+
+        ManageSound();
 
         if (throttle > 0f)
-        {
+        { 
             m_AppliedSpeed += maxSpeed * Time.deltaTime * accelerationTime;
         }
         else
@@ -100,9 +154,6 @@ public class Car : MonoBehaviour
 
         if (m_AppliedSpeed < .5f)
             m_VelDir.localEulerAngles = Vector3.zero;
-
-        turnInput = canMove ? Input.GetAxisRaw("Horizontal") : 0f;
-        isDrifting = Input.GetKey(KeyCode.LeftShift) && canMove;
 
         float zVal = transform.eulerAngles.z;
 
@@ -144,16 +195,17 @@ public class Car : MonoBehaviour
         if (driftChargeMeter >= maxDriftCharge && !isInAttackMode)
         {
             driftMeterSlider.fillRect.GetComponent<Image>().sprite = BlueEnergyBarSprite;
-            if (Input.GetKeyDown(KeyCode.Space) && canMove)
+            if ((useMobileControls && mobileAttackMode && canMove) || (!useMobileControls && Input.GetKeyDown(KeyCode.Space) && canMove))
             {
                 ActivateAttackMode();
+                mobileAttackMode = false;
             }
         }
 
         if (isInAttackMode)
         {
             attackModeTimer -= Time.deltaTime;
-            driftChargeMeter = (attackModeTimer / attackModeDuration) * 100f;
+            driftChargeMeter = (attackModeTimer / Globals.attackModeDuration) * 100f;
             if (attackModeTimer <= 0f)
             {
                 isInAttackMode = false;
@@ -194,11 +246,55 @@ public class Car : MonoBehaviour
         }
     }
 
+
+    void ManageSound()
+    {
+        // Engine sound control
+        if (GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 5f && !isGameOver)
+        {
+            if (!EngineAudioSource.isPlaying)
+            {
+                EngineAudioSource.Play();
+            }
+        }
+        else
+        {
+            if (EngineAudioSource.isPlaying)
+            {
+                EngineAudioSource.Stop();
+            }
+        }
+
+        // Drift sound control with volume fading
+        if (isDrifting && Mathf.Abs(turnInput) > 0.5f && !isGameOver)
+        {
+            if (!DriftAudioSource.isPlaying)
+            {
+                DriftAudioSource.Play();
+            }
+
+            // Smoothly fade in drift sound volume
+            DriftAudioSource.volume = Mathf.Lerp(DriftAudioSource.volume, 0.5f, Time.deltaTime * 5f);
+        }
+        else
+        {
+            // Smoothly fade out drift sound volume
+            DriftAudioSource.volume = Mathf.Lerp(DriftAudioSource.volume, 0.0f, Time.deltaTime * 5f);
+
+            // Stop playing when volume is very low to free resources
+            if (DriftAudioSource.isPlaying && DriftAudioSource.volume < 0.01f)
+            {
+                DriftAudioSource.Stop();
+            }
+        }
+    }
+
+
     private void ActivateAttackMode()
     {
         isInAttackMode = true;
         shieldAuraVfx.SetActive(true);
-        attackModeTimer = attackModeDuration;
+        attackModeTimer = Globals.attackModeDuration;
         Debug.Log("ATTACK MODE BABY");
     }
 
@@ -217,6 +313,36 @@ public class Car : MonoBehaviour
         ElectricShockFx.gameObject.SetActive(false);
         ElectricShockFx.Pause();
         canMove = true;
+    }
+
+    public void SetThrottle(float value)
+    {
+        mobileThrottle = value;
+    }
+
+    public void SetSteer(float value)
+    {
+        mobileSteer = value;    
+    }
+
+    public void SetDrift(bool value)
+    {
+        mobileDrift = value;    
+    }
+
+    public void SetAttackMode(bool value)
+    {
+        mobileAttackMode = value;
+    }
+
+    public void OnMainMenuButtonPressed()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void OnQuitGameButtonPressed()
+    {
+        Application.Quit();
     }
 
     private void FixedUpdate()

@@ -8,6 +8,7 @@ public class Turret : MonoBehaviour
     public Transform firePoint;
     public GameObject bulletPrefab;
     public GameObject gearPrefab;
+    public AudioSource bulletSound;
     [SerializeField] private float rotationSpeed = 200.0f;
     [SerializeField] private float lockOnTime = 1.5f;
     [SerializeField] private float burstCount = 5f;
@@ -47,6 +48,7 @@ public class Turret : MonoBehaviour
     {
         for (int i = 0; i < burstCount; i++)
         {
+            bulletSound.Play();
             Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
             yield return new WaitForSeconds(burstInterval);
         }
@@ -60,6 +62,7 @@ public class Turret : MonoBehaviour
             if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
             {
                 Destroy(gameObject);
+                Instantiate(gearPrefab, transform.position, transform.rotation);
                 Instantiate(gearPrefab, transform.position, transform.rotation);
             }
             else

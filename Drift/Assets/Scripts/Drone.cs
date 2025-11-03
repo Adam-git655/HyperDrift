@@ -9,7 +9,7 @@ public class Drone : MonoBehaviour
     public GameObject Gear;
     public float moveSpeed = 3f;
 
-    private float attackRange = 0.3f;
+    private readonly float attackRange = 0.7f;
     public float attackCooldown = 3f;
     private bool isAttacking = false;
     private float attackTimer;
