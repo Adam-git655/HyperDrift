@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -14,6 +15,17 @@ public static class Globals
 
 public class Car : MonoBehaviour
 {
+    private CarControls controls;
+    public SteeringWheelController steeringWheelController;
+
+    private float steerInput;
+    private bool driftPressed;
+    private bool attackModePressed;
+
+    public GameObject attackModeButtonUI;
+
+    public bool autoThrottleEnabled = true;
+
     public float carHealth = 100f;
 
     public GameObject GameOverPanel;
@@ -73,12 +85,28 @@ public class Car : MonoBehaviour
 
     private bool isGameOver = false;
 
-    [Header("Mobile Controls")]
-    public bool useMobileControls = false;
-    public float mobileThrottle = 0f;
-    public float mobileSteer = 0f;
-    public bool mobileDrift = false;
-    public bool mobileAttackMode = false;
+    private void Awake()
+    {
+        controls = new CarControls();
+
+        controls.Driving.Steer.performed += ctx => steerInput = ctx.ReadValue<float>();
+        controls.Driving.Steer.canceled += ctx => steerInput = 0f;
+
+        controls.Driving.Drift.performed += ctx => driftPressed = true;
+        controls.Driving.Drift.canceled += ctx => driftPressed = false;
+
+        controls.Driving.AttackMode.performed += ctx => attackModePressed = true;
+
+    }
+    private void OnEnable()
+    {
+        controls.Driving.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Driving.Disable();
+    }
 
     void Start()
     {
@@ -102,6 +130,7 @@ public class Car : MonoBehaviour
         }
         ElectricShockFx.Pause();
         ElectricShockFx.gameObject.SetActive(false);
+        attackModeButtonUI.SetActive(false);
         GameOverPanel.SetActive(false);
     }
 
@@ -124,24 +153,18 @@ public class Car : MonoBehaviour
 
         GearsCountText.text = gears.ToString();
 
+#if UNITY_EDITOR || UNITY_STANDALONE
+        turnInput = canMove ? steerInput : 0f;
 
-        float throttle;
-        if (useMobileControls)
-        {
-            throttle = canMove ? mobileThrottle : 0f;
-            turnInput = canMove ? mobileSteer : 0f;
-            isDrifting = canMove && mobileDrift;
-        }
-        else
-        {
-            throttle = Input.GetKey(KeyCode.W) && canMove ? 1f : 0f;
-            turnInput = canMove ? Input.GetAxisRaw("Horizontal") : 0f;
-            isDrifting = Input.GetKey(KeyCode.LeftShift) && canMove;
-        }
+#elif UNITY_ANDROID || UNITY_IOS
+        turnInput = canMove && steeringWheelController != null ? steeringWheelController.steerInput : 0f;
+#endif
 
+        isDrifting = canMove && driftPressed;
+        
         ManageSound();
 
-        if (throttle > 0f)
+        if (autoThrottleEnabled && canMove)
         { 
             m_AppliedSpeed += maxSpeed * Time.deltaTime * accelerationTime;
         }
@@ -195,10 +218,16 @@ public class Car : MonoBehaviour
         if (driftChargeMeter >= maxDriftCharge && !isInAttackMode)
         {
             driftMeterSlider.fillRect.GetComponent<Image>().sprite = BlueEnergyBarSprite;
-            if ((useMobileControls && mobileAttackMode && canMove) || (!useMobileControls && Input.GetKeyDown(KeyCode.Space) && canMove))
+
+#if UNITY_ANDROID || UNITY_IOS
+            attackModeButtonUI.SetActive(true);
+#endif
+
+            if (attackModePressed && canMove)
             {
                 ActivateAttackMode();
-                mobileAttackMode = false;
+                attackModePressed = false;
+                attackModeButtonUI.SetActive(false);
             }
         }
 
@@ -237,12 +266,6 @@ public class Car : MonoBehaviour
             {
                 wheel.AddSegment(newAlpha);
             }
-        }
-
-        // Chaos Boost when exiting drift
-        if (!isDrifting && Mathf.Abs(turnInput) < 0.1f && m_AppliedSpeed > 0.2f && throttle > 0f)
-        {
-            m_AppliedSpeed = Mathf.Min(m_AppliedSpeed + Time.deltaTime * 5f, maxSpeed * 1.2f);
         }
     }
 
@@ -313,26 +336,6 @@ public class Car : MonoBehaviour
         ElectricShockFx.gameObject.SetActive(false);
         ElectricShockFx.Pause();
         canMove = true;
-    }
-
-    public void SetThrottle(float value)
-    {
-        mobileThrottle = value;
-    }
-
-    public void SetSteer(float value)
-    {
-        mobileSteer = value;    
-    }
-
-    public void SetDrift(bool value)
-    {
-        mobileDrift = value;    
-    }
-
-    public void SetAttackMode(bool value)
-    {
-        mobileAttackMode = value;
     }
 
     public void OnMainMenuButtonPressed()
