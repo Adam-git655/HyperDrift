@@ -26,7 +26,7 @@ public class SteeringWheelController : MonoBehaviour, IPointerDownHandler, IPoin
 
     private void Start()
     {
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
         gameObject.SetActive(false);
 #elif UNITY_ANDROID || UNITY_IOS
         gameObject.SetActive(true);

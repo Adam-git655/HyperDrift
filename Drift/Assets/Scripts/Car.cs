@@ -153,7 +153,7 @@ public class Car : MonoBehaviour
 
         GearsCountText.text = gears.ToString();
 
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
         turnInput = canMove ? steerInput : 0f;
 
 #elif UNITY_ANDROID || UNITY_IOS
