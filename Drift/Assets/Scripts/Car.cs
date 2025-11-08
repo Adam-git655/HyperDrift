@@ -153,12 +153,17 @@ public class Car : MonoBehaviour
 
         GearsCountText.text = gears.ToString();
 
-#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
+
         turnInput = canMove ? steerInput : 0f;
 
-#elif UNITY_ANDROID || UNITY_IOS
-        turnInput = canMove && steeringWheelController != null ? steeringWheelController.steerInput : 0f;
-#endif
+//For steering wheel support
+
+//#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
+//        turnInput = canMove ? steerInput : 0f;
+
+//#elif UNITY_ANDROID || UNITY_IOS
+//        turnInput = canMove && steeringWheelController != null ? steeringWheelController.steerInput : 0f;
+//#endif
 
         isDrifting = canMove && driftPressed;
         
