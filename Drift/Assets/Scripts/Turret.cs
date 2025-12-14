@@ -8,18 +8,21 @@ public class Turret : MonoBehaviour
     public Transform firePoint;
     public GameObject bulletPrefab;
     public GameObject gearPrefab;
-    public AudioSource bulletSound;
     [SerializeField] private float rotationSpeed = 200.0f;
     [SerializeField] private float lockOnTime = 1.5f;
     [SerializeField] private float burstCount = 5f;
     [SerializeField] private float burstInterval = 0.2f;
+
+    private DamageFlash damageFlash;
 
     private float lockOnTimer = 0f;
 
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        damageFlash = GetComponent<DamageFlash>();
     }
+
     private void Update()
     {
         if (player == null) return;
@@ -48,7 +51,7 @@ public class Turret : MonoBehaviour
     {
         for (int i = 0; i < burstCount; i++)
         {
-            bulletSound.Play();
+            SoundManager.PlaySound(SoundType.BulletFire);
             Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
             yield return new WaitForSeconds(burstInterval);
         }
@@ -61,12 +64,22 @@ public class Turret : MonoBehaviour
             Car car = collision.GetComponent<Car>();
             if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
             {
-                Destroy(gameObject);
-                Instantiate(gearPrefab, transform.position, transform.rotation);
-                Instantiate(gearPrefab, transform.position, transform.rotation);
+                StartCoroutine(FlashThenDestroy());
             }
             else
-                car.carHealth -= 3;
+                car.TakeDamage(3f);
         }
+    }
+
+    private IEnumerator FlashThenDestroy()
+    {
+        SoundManager.PlaySound(SoundType.EnemyHit);
+
+        yield return StartCoroutine(damageFlash.PlayDamageFlash());
+
+        for (int i = 0; i < 3; ++i)
+            Instantiate(gearPrefab, transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), transform.position.z), transform.rotation);
+        
+        Destroy(gameObject);
     }
 }

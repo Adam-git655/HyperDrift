@@ -16,6 +16,8 @@ public class Drone : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    private DamageFlash damageFlash;
+
     Car car;
 
     private void Start()
@@ -24,6 +26,7 @@ public class Drone : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         isAttacking = false;
         car = player.GetComponent<Car>();
+        damageFlash = GetComponent<DamageFlash>();
     }
 
     private void Update()
@@ -60,7 +63,7 @@ public class Drone : MonoBehaviour
 
             if (attackTimer >= attackCooldown)
             {
-                car.carHealth -= 1;
+                car.TakeDamage(1f);
                 attackTimer = 0f;
             }
         }
@@ -72,13 +75,22 @@ public class Drone : MonoBehaviour
         {
             if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
             {
-                Destroy(gameObject);
-                Instantiate(Gear, transform.position, transform.rotation);
+                StartCoroutine(FlashThenDestroy());
             }
             else
             {
-                car.carHealth -= 1.5f;
+                car.TakeDamage(1.5f);
             }
         }
+    }
+
+    private IEnumerator FlashThenDestroy()
+    {
+        SoundManager.PlaySound(SoundType.EnemyHit);
+
+        yield return StartCoroutine(damageFlash.PlayDamageFlash());
+
+        Instantiate(Gear, transform.position, transform.rotation);
+        Destroy(gameObject);
     }
 }

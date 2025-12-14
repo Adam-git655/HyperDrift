@@ -29,7 +29,7 @@ public class Bullet : MonoBehaviour
             }
             else
             {
-                car.carHealth -= 1;
+                car.TakeDamage(1f);
                 Destroy(gameObject);
             }     
         }

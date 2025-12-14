@@ -17,11 +17,14 @@ public class Tank : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    private DamageFlash damageFlash;
+
     Car car;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        damageFlash = GetComponent<DamageFlash>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         isCharging = false;
         car = player.GetComponent<Car>();
@@ -90,17 +93,26 @@ public class Tank : MonoBehaviour
         {
             if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
             {
-                Destroy(gameObject);
-                Instantiate(Gear, transform.position, Quaternion.identity);
+                StartCoroutine(FlashThenDestroy());
             }
             else if (isCharging)
             {
-                car.carHealth -= 5f;
+                car.TakeDamage(5f);
             }
             else
             {
-                car.carHealth -= 1f;
+                car.TakeDamage(1f);
             }
         }
+    }
+
+    private IEnumerator FlashThenDestroy()
+    {
+        SoundManager.PlaySound(SoundType.EnemyHit);
+
+        yield return StartCoroutine(damageFlash.PlayDamageFlash());
+
+        Instantiate(Gear, transform.position, transform.rotation);
+        Destroy(gameObject);
     }
 }

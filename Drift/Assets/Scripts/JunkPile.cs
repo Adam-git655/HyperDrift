@@ -10,7 +10,7 @@ public class JunkPile : MonoBehaviour
         { 
             if (collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 75f)
             {
-                collision.gameObject.GetComponent<Car>().carHealth -= 4f;
+                collision.gameObject.GetComponent<Car>().TakeDamage(4f);
             }
         }
     }

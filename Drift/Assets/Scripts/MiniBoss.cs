@@ -8,7 +8,6 @@ public class MiniBoss : MonoBehaviour
     public Transform player;
     public GameObject bulletPrefab;
     public GameObject gearPrefab;
-    public AudioSource bulletSound;
 
     public int health = 10;
     public Slider healthBarSlider;
@@ -21,6 +20,8 @@ public class MiniBoss : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
 
+    private DamageFlash damageFlash;
+
     Car car;
 
     private void Start()
@@ -29,6 +30,7 @@ public class MiniBoss : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();   
         player = GameObject.FindGameObjectWithTag("Player").transform;
         car = player.GetComponent<Car>();
+        damageFlash = GetComponent<DamageFlash>();
 
         healthBarSlider = GameObject.Find("Canvas").transform.GetChild(4).GetComponent<Slider>();
         healthBarSlider.gameObject.SetActive(true);
@@ -50,7 +52,7 @@ public class MiniBoss : MonoBehaviour
     {
         for (int i = 0; i < radialBulletCount; i++)
         {
-            bulletSound.Play();
+            SoundManager.PlaySound(SoundType.BulletFire);
             float angle = i * (360f / radialBulletCount);
             Quaternion rotation = Quaternion.Euler(0, 0, angle);
             Instantiate(bulletPrefab, transform.position, rotation);
@@ -91,9 +93,13 @@ public class MiniBoss : MonoBehaviour
         {
             Car car = collision.GetComponent<Car>();
             if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
+            {
+                SoundManager.PlaySound(SoundType.EnemyHit);
+                StartCoroutine(damageFlash.PlayDamageFlash());
                 health -= 1;
+            }
             else
-                car.carHealth -= 7f;
+                car.TakeDamage(7f);
         }
     }
 }

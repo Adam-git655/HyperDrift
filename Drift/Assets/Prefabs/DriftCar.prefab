@@ -56,6 +56,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d54f36cf9b9f14b86356cb7ef46dc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  steeringWheelController: {fileID: 0}
+  attackModeButtonUI: {fileID: 0}
+  autoThrottleEnabled: 1
   carHealth: 100
   GameOverPanel: {fileID: 0}
   timeSurvivedCount: {fileID: 0}
@@ -226,6 +229,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4486037635974306}
   - component: {fileID: 212281845614439842}
+  - component: {fileID: 5967701992336616916}
   m_Layer: 6
   m_Name: CarSprite
   m_TagString: Untagged
@@ -268,7 +272,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 39f57ff464395314a97cdfa3908388fb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -300,6 +304,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5967701992336616916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705634034964018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 830878ed8b50c1d458af459fb804b106, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashTime: 0.1
 --- !u!1 &1732070044615320
 GameObject:
   m_ObjectHideFlags: 0

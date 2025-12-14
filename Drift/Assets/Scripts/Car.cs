@@ -85,6 +85,8 @@ public class Car : MonoBehaviour
 
     private bool isGameOver = false;
 
+    private DamageFlash damageFlash;
+
     private void Awake()
     {
         controls = new CarControls();
@@ -113,6 +115,7 @@ public class Car : MonoBehaviour
         Time.timeScale = 1.0f;
         isGameOver = false;
         m_RigidBody = GetComponent<Rigidbody2D>();
+        damageFlash = GetComponentInChildren<DamageFlash>();
         HealthBarSlider.maxValue = Globals.maxCarHealth;
         carHealth = Globals.maxCarHealth;
         driftMeterSlider.maxValue = maxDriftCharge;
@@ -138,6 +141,7 @@ public class Car : MonoBehaviour
     {
         HealthBarSlider.value = carHealth;
 
+        //On death
         if (carHealth <= 0f && !isGameOver)
         {
             isGameOver = true;
@@ -153,7 +157,7 @@ public class Car : MonoBehaviour
 
         GearsCountText.text = gears.ToString();
 
-
+        //MOVEMENT
         turnInput = canMove ? steerInput : 0f;
 
 //For steering wheel support
@@ -274,6 +278,12 @@ public class Car : MonoBehaviour
         }
     }
 
+    public void TakeDamage(float damage)
+    {
+        carHealth -= damage;
+        SoundManager.PlaySound(SoundType.CarDamage);
+        StartCoroutine(damageFlash.PlayDamageFlash());
+    }
 
     void ManageSound()
     {

@@ -142,6 +142,7 @@ GameObject:
   - component: {fileID: 1768139534423104425}
   - component: {fileID: 4940361822159158008}
   - component: {fileID: 6195670835158846415}
+  - component: {fileID: 1191629518853724069}
   m_Layer: 0
   m_Name: Mini Boss
   m_TagString: Untagged
@@ -185,7 +186,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 39f57ff464395314a97cdfa3908388fb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -333,3 +334,17 @@ MonoBehaviour:
   timeBetweenPatterns: 2
   radialBulletCount: 16
   moveSpeed: 1
+--- !u!114 &1191629518853724069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7841334309401289633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 830878ed8b50c1d458af459fb804b106, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashTime: 0.25

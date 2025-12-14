@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3872685207388683806}
   - component: {fileID: 3522796024410719049}
   - component: {fileID: 1297828770220303155}
+  - component: {fileID: 58034680760268558}
   - component: {fileID: 5181825810760088097}
   - component: {fileID: 6254208794333991634}
   - component: {fileID: 8805533573617896710}
@@ -56,7 +57,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 39f57ff464395314a97cdfa3908388fb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -102,9 +103,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   Gear: {fileID: 5398001549116259696, guid: 47312e94c54f46e4d932d29de427f790, type: 3}
-  hitSound: {fileID: 0}
   moveSpeed: 4
   attackCooldown: 3
+--- !u!114 &58034680760268558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 262976146203748613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 830878ed8b50c1d458af459fb804b106, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashTime: 0.1
 --- !u!58 &5181825810760088097
 CircleCollider2D:
   m_ObjectHideFlags: 0

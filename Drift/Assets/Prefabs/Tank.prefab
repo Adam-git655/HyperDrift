@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8402323730202407337}
   - component: {fileID: 4432000377381229878}
   - component: {fileID: 5128585442654114687}
+  - component: {fileID: 5280565956538552894}
   m_Layer: 7
   m_Name: Tank
   m_TagString: Enemy
@@ -56,7 +57,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 39f57ff464395314a97cdfa3908388fb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -219,8 +220,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   Gear: {fileID: 5398001549116259696, guid: 47312e94c54f46e4d932d29de427f790, type: 3}
-  hitSound: {fileID: 0}
   moveSpeed: 2
   chargeSpeed: 10
   chargeCooldown: 3
   chargeDuration: 0.47
+--- !u!114 &5280565956538552894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5917952859417265748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 830878ed8b50c1d458af459fb804b106, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashTime: 0.1
