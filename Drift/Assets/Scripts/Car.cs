@@ -8,13 +8,15 @@ using UnityEngine.Tilemaps;
 
 public static class Globals
 {
-    public static float maxCarHealth = 100.0f;
-    public static float attackModeDuration = 10f;
     public static int totalGears = 0;
 }
 
 public class Car : MonoBehaviour
 {
+    //Stats
+    public PlayerBaseStats baseStats;
+    public PlayerStatsRuntime stats;
+
     private CarControls controls;
     public SteeringWheelController steeringWheelController;
 
@@ -26,7 +28,7 @@ public class Car : MonoBehaviour
 
     public bool autoThrottleEnabled = true;
 
-    public float carHealth = 100f;
+    private float carHealth;
 
     public GameObject GameOverPanel;
     public Text timeSurvivedCount;
@@ -40,7 +42,6 @@ public class Car : MonoBehaviour
     public Text GearsCountText;
     public int gears = 0;
 
-    public float maxSpeed = 10f;
     public float accelerationTime = 1f;
     public float friction = 1.2f;
     public float rotateDegreesPerSec = 220f;
@@ -73,7 +74,7 @@ public class Car : MonoBehaviour
 
     Rigidbody2D m_RigidBody;
     private Transform m_VelDir;
-    float m_AppliedSpeed = 0;
+    private float m_AppliedSpeed = 0;
     private List<WheelTrack> m_WheelTracks;
     private Vector3 m_LastPos;
 
@@ -89,6 +90,9 @@ public class Car : MonoBehaviour
 
     private void Awake()
     {
+        //set current stats to runtime stats
+        stats = new PlayerStatsRuntime(baseStats);
+
         controls = new CarControls();
 
         controls.Driving.Steer.performed += ctx => steerInput = ctx.ReadValue<float>();
@@ -116,8 +120,8 @@ public class Car : MonoBehaviour
         isGameOver = false;
         m_RigidBody = GetComponent<Rigidbody2D>();
         damageFlash = GetComponentInChildren<DamageFlash>();
-        HealthBarSlider.maxValue = Globals.maxCarHealth;
-        carHealth = Globals.maxCarHealth;
+        HealthBarSlider.maxValue = stats.MaxHealth.Value;
+        carHealth = stats.MaxHealth.Value;
         driftMeterSlider.maxValue = maxDriftCharge;
         m_VelDir = new GameObject("VelocityDirection").transform;
         m_VelDir.parent = transform;
@@ -175,14 +179,14 @@ public class Car : MonoBehaviour
 
         if (autoThrottleEnabled && canMove)
         { 
-            m_AppliedSpeed += maxSpeed * Time.deltaTime * accelerationTime;
+            m_AppliedSpeed += stats.MaxSpeed.Value * Time.deltaTime * accelerationTime;
         }
         else
         {
             m_AppliedSpeed -= friction * Time.deltaTime;
         }
 
-        m_AppliedSpeed = Mathf.Clamp(m_AppliedSpeed, 0f, maxSpeed);
+        m_AppliedSpeed = Mathf.Clamp(m_AppliedSpeed, 0f, stats.MaxSpeed.Value);
 
         if (m_AppliedSpeed < .5f)
             m_VelDir.localEulerAngles = Vector3.zero;
@@ -192,9 +196,9 @@ public class Car : MonoBehaviour
         if (m_AppliedSpeed > 0.1f && Mathf.Abs(turnInput) > 0.1f)
         {
             if (!isDrifting)
-                zVal += rotateDegreesPerSec * Time.deltaTime * -turnInput * Mathf.Clamp01(m_AppliedSpeed / maxSpeed);
+                zVal += rotateDegreesPerSec * Time.deltaTime * -turnInput * Mathf.Clamp01(m_AppliedSpeed / stats.MaxSpeed.Value);
             else
-                zVal += rotateDegreesPerSec * 2.3f * Time.deltaTime * -turnInput * Mathf.Clamp01(m_AppliedSpeed / maxSpeed);
+                zVal += rotateDegreesPerSec * 2.3f * Time.deltaTime * -turnInput * Mathf.Clamp01(m_AppliedSpeed / stats.MaxSpeed.Value);
         }
         else
         {
@@ -243,7 +247,7 @@ public class Car : MonoBehaviour
         if (isInAttackMode)
         {
             attackModeTimer -= Time.deltaTime;
-            driftChargeMeter = (attackModeTimer / Globals.attackModeDuration) * 100f;
+            driftChargeMeter = (attackModeTimer / stats.AttackModeDuration.Value) * 100f;
             if (attackModeTimer <= 0f)
             {
                 isInAttackMode = false;
@@ -332,7 +336,7 @@ public class Car : MonoBehaviour
     {
         isInAttackMode = true;
         shieldAuraVfx.SetActive(true);
-        attackModeTimer = Globals.attackModeDuration;
+        attackModeTimer = stats.AttackModeDuration.Value;
         Debug.Log("ATTACK MODE BABY");
     }
 
