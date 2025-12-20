@@ -7,7 +7,6 @@ public class Gear : MonoBehaviour
     private bool followPlayer = false;
     GameObject player = null;
     public float followSpeed = 6f;
-    public float pickupRange = 2f;
     private bool canBePickedUp = false;
 
     private void Start()
@@ -43,7 +42,7 @@ public class Gear : MonoBehaviour
 
         if (canBePickedUp)
         {
-            if (Vector2.Distance(player.transform.position, transform.position) < pickupRange)
+            if (Vector2.Distance(player.transform.position, transform.position) < player.GetComponent<Car>().stats.GearPickupRange.Value)
             {
                 followPlayer = false;
                 canBePickedUp = false;

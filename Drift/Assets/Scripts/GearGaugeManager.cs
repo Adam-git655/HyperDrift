@@ -13,9 +13,9 @@ public class GearGaugeManager : MonoBehaviour
     [SerializeField] private int maxGearExpIncrease = 20;
     [SerializeField] private int currentLevel = 1;
 
-    //Singleton
     private void Awake()
     {
+        //Singleton
         if (Instance != null && Instance != this)
             Destroy(this);
         else
@@ -41,7 +41,8 @@ public class GearGaugeManager : MonoBehaviour
 
     private void OnLevelUp()
     {
-        //Showing Ability upgrade UI logic
+        //Showing Ability upgrade menu
+        UpgradeMenu.Instance.Open();
 
         //Increasing level
         currentLevel++;

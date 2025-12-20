@@ -103,6 +103,7 @@ public class Car : MonoBehaviour
 
         controls.Driving.AttackMode.performed += ctx => attackModePressed = true;
 
+        stats.MaxHealth.OnValueChanged += OnMaxHealthChanged;
     }
     private void OnEnable()
     {
@@ -145,7 +146,7 @@ public class Car : MonoBehaviour
     {
         HealthBarSlider.value = carHealth;
 
-        //On death
+        //On death 
         if (carHealth <= 0f && !isGameOver)
         {
             isGameOver = true;
@@ -280,6 +281,16 @@ public class Car : MonoBehaviour
                 wheel.AddSegment(newAlpha);
             }
         }
+    }
+
+    private void OnMaxHealthChanged(float newValue)
+    {
+        //Reset health to full
+        carHealth = newValue;
+
+        //Update ui
+        HealthBarSlider.maxValue = newValue;
+        HealthBarSlider.value = carHealth;
     }
 
     public void TakeDamage(float damage)
