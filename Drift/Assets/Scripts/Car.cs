@@ -16,77 +16,72 @@ public class Car : MonoBehaviour
     //Stats
     public PlayerBaseStats baseStats;
     public PlayerStatsRuntime stats;
+    public int gears = 0;
 
-    private CarControls controls;
-    public SteeringWheelController steeringWheelController;
+    [Header("Speed")]
+    public float accelerationTime = 1.2f; //seconds to reach max speed
+    public float decelRate = 4f;
+    public float rotateDegreesPerSec = 220f;
 
-    private float steerInput;
-    private bool driftPressed;
-    private bool attackModePressed;
+    [Header("Drifting")]
+    public float driftMaxAngle = 60f;
+    public float driftAngleBuildSpeed = 10f;
+    public float driftAngleReturnSpeed = 5f;
 
+    public float maxDriftSpeed = 1f;
+    public float driftSpeedBoost = 2.5f;
+    public float driftSpeedDecay = 5.0f;
+
+    [Header("References")]
     public GameObject attackModeButtonUI;
-
-    public bool autoThrottleEnabled = true;
-
-    private float carHealth;
-
     public GameObject GameOverPanel;
     public Text timeSurvivedCount;
     public Text gearsCollectedCount;
     public Tilemap tilemap;
-
     public Slider HealthBarSlider;
-
     public ParticleSystem ElectricShockFx;
-
     public Text GearsCountText;
-    public int gears = 0;
+    public GameObject shieldAuraVfx;
+    public Slider driftMeterSlider;
+    public Transform[] wheels;
+    public Material trailMaterial;
+    private DamageFlash damageFlash;
+    public Sprite BlueEnergyBarSprite;
+    public Sprite GreyEnergyBarSprite;
+    public AudioSource EngineAudioSource;
+    public AudioSource DriftAudioSource;
 
-    public float accelerationTime = 1f;
-    public float friction = 1.2f;
-    public float rotateDegreesPerSec = 220f;
-    private bool canMove = true;
-
+    //Internals/States/Values
+    private Rigidbody2D rb;
+    private Transform velDir;
+    private float m_AppliedSpeed = 0;
+    private float steerInput;
     public float turnInput;
 
-    public float driftMaxAngle = 60f;
-    public float driftAngleBuildSpeed = 10f;
-    public float driftAngleReturnSpeed = 5f;
-    public float maxDriftSpeed = 2.5f;
-    public float driftSpeedBoost = 2.5f;
-    public float driftSpeedDecay = 5.0f;
-    private float currentDriftSpeed = 1.0f;
+    private float carHealth;
+    private bool isGameOver = false;
+
+    private bool attackModePressed;
+    public bool canMove = true;
 
     public bool isInAttackMode = false;
     private float attackModeTimer = 0f;
-    public GameObject shieldAuraVfx;
 
+    private bool driftPressed;
+    private float currentDriftSpeed = 1.0f;
     public bool isDrifting = false;
-    public Slider driftMeterSlider;
     private float driftChargeMeter = 0f;
     private float maxDriftCharge = 100f;
     private float driftChargePerSecond = 25f;
 
     public float trackSegLength = .15f;
     public int trackSegCount = 100;
-    public Transform[] wheels;
-    public Material trailMaterial;
-
-    Rigidbody2D m_RigidBody;
-    private Transform m_VelDir;
-    private float m_AppliedSpeed = 0;
     private List<WheelTrack> m_WheelTracks;
     private Vector3 m_LastPos;
 
-    public Sprite BlueEnergyBarSprite;
-    public Sprite GreyEnergyBarSprite;
-
-    public AudioSource EngineAudioSource;
-    public AudioSource DriftAudioSource;
-
-    private bool isGameOver = false;
-
-    private DamageFlash damageFlash;
+    //Controls/Input
+    private CarControls controls;
+    public SteeringWheelController steeringWheelController;
 
     private void Awake()
     {
@@ -119,15 +114,18 @@ public class Car : MonoBehaviour
     {
         Time.timeScale = 1.0f;
         isGameOver = false;
-        m_RigidBody = GetComponent<Rigidbody2D>();
+
+        rb = GetComponent<Rigidbody2D>();
         damageFlash = GetComponentInChildren<DamageFlash>();
         HealthBarSlider.maxValue = stats.MaxHealth.Value;
         carHealth = stats.MaxHealth.Value;
         driftMeterSlider.maxValue = maxDriftCharge;
-        m_VelDir = new GameObject("VelocityDirection").transform;
-        m_VelDir.parent = transform;
-        m_VelDir.localPosition = Vector3.zero;
-        m_VelDir.localEulerAngles = Vector3.zero;
+
+        velDir = new GameObject("VelocityDirection").transform;
+        velDir.parent = transform;
+        velDir.localPosition = Vector3.zero;
+        velDir.localEulerAngles = Vector3.zero;
+
         m_LastPos = transform.position;
         m_WheelTracks = new List<WheelTrack>();
         for (int i = 0; i < wheels.Length; i++)
@@ -136,6 +134,7 @@ public class Car : MonoBehaviour
             wheel.Init(wheels[i], trailMaterial, trackSegCount);
             m_WheelTracks.Add(wheel);
         }
+
         ElectricShockFx.Pause();
         ElectricShockFx.gameObject.SetActive(false);
         attackModeButtonUI.SetActive(false);
@@ -178,20 +177,23 @@ public class Car : MonoBehaviour
         
         ManageSound();
 
-        if (autoThrottleEnabled && canMove)
-        { 
-            m_AppliedSpeed += stats.MaxSpeed.Value * Time.deltaTime * accelerationTime;
-        }
-        else
-        {
-            m_AppliedSpeed -= friction * Time.deltaTime;
-        }
+        //Movement
+        float accel = stats.MaxSpeed.Value / accelerationTime;
+        float targetSpeed = canMove ? stats.MaxSpeed.Value : 0f;
+        float rate = canMove ? accel : decelRate;
+
+        m_AppliedSpeed = Mathf.MoveTowards(
+            m_AppliedSpeed,
+            targetSpeed,
+            rate * Time.deltaTime
+        );
 
         m_AppliedSpeed = Mathf.Clamp(m_AppliedSpeed, 0f, stats.MaxSpeed.Value);
 
         if (m_AppliedSpeed < .5f)
-            m_VelDir.localEulerAngles = Vector3.zero;
+            velDir.localEulerAngles = Vector3.zero;
 
+        //Rotation
         float zVal = transform.eulerAngles.z;
 
         if (m_AppliedSpeed > 0.1f && Mathf.Abs(turnInput) > 0.1f)
@@ -204,11 +206,13 @@ public class Car : MonoBehaviour
         else
         {
             // Aggressive straighten out towards velocity direction
-            zVal = Mathf.LerpAngle(transform.eulerAngles.z, m_VelDir.eulerAngles.z, Time.deltaTime * 5f);
+            zVal = Mathf.LerpAngle(transform.eulerAngles.z, velDir.eulerAngles.z, Time.deltaTime * 5f);
         }
 
         transform.eulerAngles = new Vector3(0f, 0f, zVal);
 
+
+        //Drift Direction
         float targetDriftAngle = 0f;
 
         if (isDrifting && Mathf.Abs(turnInput) > 0.1f)
@@ -258,22 +262,18 @@ public class Car : MonoBehaviour
                 Debug.Log("ATTACK MODE DISABLED :(");
             }
         }
-        else
-        {
-            maxDriftSpeed = 1f;
-        }
 
         currentDriftSpeed = Mathf.Clamp(currentDriftSpeed, 1.0f, maxDriftSpeed);
 
         float driftAngleLerpSpeed = isDrifting ? driftAngleBuildSpeed : driftAngleReturnSpeed;
 
-        m_VelDir.localEulerAngles = new Vector3(0, 0, Mathf.LerpAngle(m_VelDir.localEulerAngles.z, targetDriftAngle, Time.deltaTime * driftAngleLerpSpeed));
+        velDir.localEulerAngles = new Vector3(0, 0, Mathf.LerpAngle(velDir.localEulerAngles.z, targetDriftAngle, Time.deltaTime * driftAngleLerpSpeed));
 
         if (Vector3.Distance(transform.position, m_LastPos) > trackSegLength)
         {
             m_LastPos = transform.position;
 
-            float angleOffset = Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.z, m_VelDir.eulerAngles.z)) / 90f;
+            float angleOffset = Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.z, velDir.eulerAngles.z)) / 90f;
             Color newAlpha = new Color(0, 0, 0, Mathf.Min(angleOffset, .5f));
 
             foreach (WheelTrack wheel in m_WheelTracks)
@@ -281,6 +281,12 @@ public class Car : MonoBehaviour
                 wheel.AddSegment(newAlpha);
             }
         }
+    }
+
+    private void FixedUpdate()
+    {
+        // Apply velocity in the drift direction
+        rb.velocity = currentDriftSpeed * m_AppliedSpeed * velDir.up;
     }
 
     private void OnMaxHealthChanged(float newValue)
@@ -376,18 +382,6 @@ public class Car : MonoBehaviour
     public void OnQuitGameButtonPressed()
     {
         Application.Quit();
-    }
-
-    private void FixedUpdate()
-    {
-        Vector2 forwardVelocity = Vector2.Dot(m_RigidBody.velocity, transform.up) * transform.up;
-        Vector2 sideVelocity = Vector2.Dot(m_RigidBody.velocity, transform.right) * transform.right;
-
-        // Kill lateral velocity faster for tighter drifts
-        m_RigidBody.velocity = forwardVelocity + sideVelocity * 0.01f;
-
-        // Apply velocity in the drift direction
-        m_RigidBody.velocity = currentDriftSpeed * m_AppliedSpeed * m_VelDir.up;
     }
 
     private float Remap(float val, float srcMin, float srcMax, float destMin, float destMax)

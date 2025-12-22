@@ -5,7 +5,6 @@ using UnityEngine;
 public enum StatType
 {
     MaxHealth,
-    HealthRegen,
     MaxSpeed,
     AttackModeDuration,
     GearPickupRange

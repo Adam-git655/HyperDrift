@@ -15,6 +15,6 @@ MonoBehaviour:
   upgradeName: Pickup Range
   icon: {fileID: 0}
   upgradeDescription: Increase the distance from which you can pickup gears
-  stat: 4
+  stat: 3
   modifierType: 1
   value: 1.05

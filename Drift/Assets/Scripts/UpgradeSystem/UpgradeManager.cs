@@ -46,7 +46,6 @@ public class UpgradeManager : MonoBehaviour
         Stat stat = upgrade.stat switch
         {
             StatType.MaxHealth => player.stats.MaxHealth,
-            StatType.HealthRegen => player.stats.HealthRegen,
             StatType.MaxSpeed => player.stats.MaxSpeed,
             StatType.AttackModeDuration => player.stats.AttackModeDuration,
             StatType.GearPickupRange => player.stats.GearPickupRange,

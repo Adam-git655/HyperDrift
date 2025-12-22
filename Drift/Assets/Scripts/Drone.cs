@@ -73,7 +73,7 @@ public class Drone : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
+            if (car.isInAttackMode && car.isDrifting && car.canMove)
             {
                 StartCoroutine(FlashThenDestroy());
             }

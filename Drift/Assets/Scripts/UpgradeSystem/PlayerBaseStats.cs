@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlayerBaseStats : ScriptableObject
 {
     public float maxHealth;
-    public float healthRegen;
     public float maxSpeed;
     public float attackModeDuration;
     public float gearPickupRange;

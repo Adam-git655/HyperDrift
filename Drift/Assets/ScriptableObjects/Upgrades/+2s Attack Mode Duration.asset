@@ -15,6 +15,6 @@ MonoBehaviour:
   upgradeName: Attack Duration
   icon: {fileID: 0}
   upgradeDescription: Increase duration of attack mode
-  stat: 3
+  stat: 2
   modifierType: 0
   value: 2
