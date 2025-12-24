@@ -6,8 +6,10 @@ using UnityEngine;
 public class Drone : MonoBehaviour
 {
     public Transform player;
-    public GameObject Gear;
+    public GameObject gearPrefab;
     public float moveSpeed = 3f;
+    public float health = 10f;
+    [SerializeField] private int gearsToSpawnOnDeath = 1;
 
     private readonly float attackRange = 0.7f;
     public float attackCooldown = 3f;
@@ -75,7 +77,7 @@ public class Drone : MonoBehaviour
         {
             if (car.isInAttackMode && car.isDrifting && car.canMove)
             {
-                StartCoroutine(FlashThenDestroy());
+                TakeDamage(car.stats.Damage.Value);
             }
             else
             {
@@ -84,13 +86,28 @@ public class Drone : MonoBehaviour
         }
     }
 
-    private IEnumerator FlashThenDestroy()
+    private void TakeDamage(float amount)
     {
         SoundManager.PlaySound(SoundType.EnemyHit);
+        health -= amount;
 
+        if (health <= 0f)
+        {
+            StartCoroutine(DoFinalFlashAndDie());
+        }
+        else
+        {
+            StartCoroutine(damageFlash.PlayDamageFlash());
+        }
+    }
+
+    private IEnumerator DoFinalFlashAndDie()
+    {
         yield return StartCoroutine(damageFlash.PlayDamageFlash());
 
-        Instantiate(Gear, transform.position, transform.rotation);
+        for (int i = 0; i < gearsToSpawnOnDeath; i++)
+            Instantiate(gearPrefab, transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), transform.position.z), transform.rotation);
+        
         Destroy(gameObject);
     }
 }

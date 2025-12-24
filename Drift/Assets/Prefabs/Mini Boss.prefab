@@ -328,9 +328,9 @@ MonoBehaviour:
     type: 3}
   gearPrefab: {fileID: 5398001549116259696, guid: 47312e94c54f46e4d932d29de427f790,
     type: 3}
-  bulletSound: {fileID: 2991955824262472689}
-  health: 10
+  health: 100
   healthBarSlider: {fileID: 0}
+  gearsToSpawnOnDeath: 10
   timeBetweenPatterns: 2
   radialBulletCount: 16
   moveSpeed: 1

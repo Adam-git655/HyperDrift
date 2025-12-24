@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: +20 MaxHealth
   m_EditorClassIdentifier: 
   upgradeName: Max Health
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 54e83f5ebf067754f80d0b48f9eb9e07, type: 3}
   upgradeDescription: Increase max health of Car
   stat: 0
   modifierType: 0

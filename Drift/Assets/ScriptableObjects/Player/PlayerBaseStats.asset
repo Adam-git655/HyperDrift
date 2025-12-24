@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerBaseStats
   m_EditorClassIdentifier: 
   maxHealth: 100
-  healthRegen: 0
   maxSpeed: 8
   attackModeDuration: 10
   gearPickupRange: 2
+  damage: 10

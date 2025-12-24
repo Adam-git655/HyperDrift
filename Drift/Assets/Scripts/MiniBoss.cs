@@ -9,8 +9,10 @@ public class MiniBoss : MonoBehaviour
     public GameObject bulletPrefab;
     public GameObject gearPrefab;
 
-    public int health = 10;
+    public float health = 100f;
     public Slider healthBarSlider;
+
+    [SerializeField] private int gearsToSpawnOnDeath = 10;
 
     public float timeBetweenPatterns = 2.0f;
     public int radialBulletCount = 16;
@@ -64,13 +66,6 @@ public class MiniBoss : MonoBehaviour
         float distanceToPlayer = Vector2.Distance(player.position, transform.position);
 
         healthBarSlider.value = health;
-        if (health <= 0)
-        {
-            Destroy(gameObject);
-            healthBarSlider.gameObject.SetActive(false);
-            for (int i = 0; i < 10; i++)
-                Instantiate(gearPrefab, transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), transform.position.z), transform.rotation);
-        }
 
         if (player != null && distanceToPlayer > 0.2f)
         {
@@ -92,14 +87,37 @@ public class MiniBoss : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             Car car = collision.GetComponent<Car>();
+
             if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
-            {
-                SoundManager.PlaySound(SoundType.EnemyHit);
-                StartCoroutine(damageFlash.PlayDamageFlash());
-                health -= 1;
-            }
+                TakeDamage(car.stats.Damage.Value);
             else
                 car.TakeDamage(7f);
         }
+    }
+
+    private void TakeDamage(float amount)
+    {
+        Debug.Log(amount);
+        SoundManager.PlaySound(SoundType.EnemyHit);
+        health -= amount;
+
+        if (health <= 0f)
+        {
+            StartCoroutine(DoFinalFlashAndDie());
+        }
+        else
+        {
+            StartCoroutine(damageFlash.PlayDamageFlash());
+        }
+    }
+    private IEnumerator DoFinalFlashAndDie()
+    {
+        yield return StartCoroutine(damageFlash.PlayDamageFlash());
+
+        Destroy(gameObject);
+        healthBarSlider.gameObject.SetActive(false);
+
+        for (int i = 0; i < gearsToSpawnOnDeath; i++)
+            Instantiate(gearPrefab, transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), transform.position.z), transform.rotation);
     }
 }

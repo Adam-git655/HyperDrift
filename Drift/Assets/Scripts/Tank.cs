@@ -5,8 +5,10 @@ using UnityEngine;
 public class Tank : MonoBehaviour
 {
     public Transform player;
-    public GameObject Gear;
+    public GameObject gearPrefab;
     public float moveSpeed = 1f;
+    public float health = 15f;
+    [SerializeField] private int gearsToSpawnOnDeath = 2;
 
     public float chargeSpeed = 10f;
     private float detectionRange = 2f;
@@ -93,7 +95,7 @@ public class Tank : MonoBehaviour
         {
             if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
             {
-                StartCoroutine(FlashThenDestroy());
+                TakeDamage(car.stats.Damage.Value);
             }
             else if (isCharging)
             {
@@ -106,13 +108,28 @@ public class Tank : MonoBehaviour
         }
     }
 
-    private IEnumerator FlashThenDestroy()
+    private void TakeDamage(float amount)
     {
         SoundManager.PlaySound(SoundType.EnemyHit);
+        health -= amount;
 
+        if (health <= 0f)
+        {
+            StartCoroutine(DoFinalFlashAndDie());
+        }
+        else
+        {
+            StartCoroutine(damageFlash.PlayDamageFlash());
+        }
+    }
+
+    private IEnumerator DoFinalFlashAndDie()
+    {
         yield return StartCoroutine(damageFlash.PlayDamageFlash());
 
-        Instantiate(Gear, transform.position, transform.rotation);
+        for (int i = 0; i < gearsToSpawnOnDeath; ++i)
+            Instantiate(gearPrefab, transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), transform.position.z), transform.rotation);
+        
         Destroy(gameObject);
     }
 }

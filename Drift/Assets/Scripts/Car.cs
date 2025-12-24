@@ -99,6 +99,7 @@ public class Car : MonoBehaviour
         controls.Driving.AttackMode.performed += ctx => attackModePressed = true;
 
         stats.MaxHealth.OnValueChanged += OnMaxHealthChanged;
+        stats.MaxSpeed.OnValueChanged += OnMaxSpeedChanged;
     }
     private void OnEnable()
     {
@@ -289,7 +290,7 @@ public class Car : MonoBehaviour
         rb.velocity = currentDriftSpeed * m_AppliedSpeed * velDir.up;
     }
 
-    private void OnMaxHealthChanged(float newValue)
+    private void OnMaxHealthChanged(float oldValue, float newValue)
     {
         //Reset health to full
         carHealth = newValue;
@@ -297,6 +298,12 @@ public class Car : MonoBehaviour
         //Update ui
         HealthBarSlider.maxValue = newValue;
         HealthBarSlider.value = carHealth;
+    }
+
+    private void OnMaxSpeedChanged(float oldValue, float newValue)
+    { 
+        float speedFractionalChange = ((newValue - oldValue) / oldValue);
+        stats.Damage.Multiply(1 + speedFractionalChange * 1.8f);
     }
 
     public void TakeDamage(float damage)

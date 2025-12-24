@@ -13,7 +13,7 @@ public class Stat
 
     public float Value => (BaseValue + additiveValue) * multiplicativeValue;
 
-    public event System.Action<float> OnValueChanged; //returns new value
+    public event System.Action<float, float> OnValueChanged; //returns old and new value
 
     public Stat(float baseValue)
     {
@@ -22,13 +22,15 @@ public class Stat
 
     public void Add(float value)
     {
+        float oldValue = Value;
         additiveValue += value;
-        OnValueChanged?.Invoke(Value);
+        OnValueChanged?.Invoke(oldValue, Value);
     }
 
     public void Multiply(float value)
     {
+        float oldValue = Value;
         multiplicativeValue *= value;
-        OnValueChanged?.Invoke(Value);
+        OnValueChanged?.Invoke(oldValue, Value);
     }
 }

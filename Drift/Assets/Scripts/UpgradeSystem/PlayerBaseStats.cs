@@ -9,4 +9,5 @@ public class PlayerBaseStats : ScriptableObject
     public float maxSpeed;
     public float attackModeDuration;
     public float gearPickupRange;
+    public float damage;
 }

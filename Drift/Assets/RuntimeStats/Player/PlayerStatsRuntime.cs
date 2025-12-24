@@ -8,6 +8,7 @@ public class PlayerStatsRuntime
     public Stat MaxSpeed;
     public Stat AttackModeDuration;
     public Stat GearPickupRange;
+    public Stat Damage;
 
     public PlayerStatsRuntime(PlayerBaseStats baseStats)
     {
@@ -15,5 +16,6 @@ public class PlayerStatsRuntime
         MaxSpeed = new Stat(baseStats.maxSpeed);
         AttackModeDuration = new Stat(baseStats.attackModeDuration);
         GearPickupRange = new Stat(baseStats.gearPickupRange);
+        Damage = new Stat(baseStats.damage);
     }
 }

@@ -219,8 +219,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  Gear: {fileID: 5398001549116259696, guid: 47312e94c54f46e4d932d29de427f790, type: 3}
+  gearPrefab: {fileID: 5398001549116259696, guid: 47312e94c54f46e4d932d29de427f790,
+    type: 3}
   moveSpeed: 2
+  health: 15
+  gearsToSpawnOnDeath: 2
   chargeSpeed: 10
   chargeCooldown: 3
   chargeDuration: 0.47

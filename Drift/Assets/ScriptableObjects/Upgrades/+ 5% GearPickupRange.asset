@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: + 5% GearPickupRange
   m_EditorClassIdentifier: 
   upgradeName: Pickup Range
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 299eb773688bfbb488d026418852fca0, type: 3}
   upgradeDescription: Increase the distance from which you can pickup gears
   stat: 3
   modifierType: 1
