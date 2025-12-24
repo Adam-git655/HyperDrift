@@ -7,7 +7,8 @@ public enum StatType
     MaxHealth,
     MaxSpeed,
     AttackModeDuration,
-    GearPickupRange
+    GearPickupRange,
+    DriftChargeRate
 }
 
 public enum ModifierType

@@ -71,8 +71,7 @@ public class Car : MonoBehaviour
     private float currentDriftSpeed = 1.0f;
     public bool isDrifting = false;
     private float driftChargeMeter = 0f;
-    private float maxDriftCharge = 100f;
-    private float driftChargePerSecond = 25f;
+    private readonly float maxDriftCharge = 100f;
 
     public float trackSegLength = .15f;
     public int trackSegCount = 100;
@@ -223,7 +222,8 @@ public class Car : MonoBehaviour
 
             if (!isInAttackMode)
             {
-                driftChargeMeter += driftChargePerSecond * Time.deltaTime;
+                Debug.Log(stats.DriftChargeRate.Value);
+                driftChargeMeter += stats.DriftChargeRate.Value * Time.deltaTime;
                 driftChargeMeter = Mathf.Min(driftChargeMeter, maxDriftCharge);
             }
         }

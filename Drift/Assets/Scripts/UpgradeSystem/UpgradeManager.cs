@@ -49,6 +49,7 @@ public class UpgradeManager : MonoBehaviour
             StatType.MaxSpeed => player.stats.MaxSpeed,
             StatType.AttackModeDuration => player.stats.AttackModeDuration,
             StatType.GearPickupRange => player.stats.GearPickupRange,
+            StatType.DriftChargeRate => player.stats.DriftChargeRate,
             _ => null
         };
 

@@ -17,3 +17,4 @@ MonoBehaviour:
   attackModeDuration: 10
   gearPickupRange: 2
   damage: 10
+  driftChargeRate: 25
