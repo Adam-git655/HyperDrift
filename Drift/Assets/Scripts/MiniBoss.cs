@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,7 @@ public class MiniBoss : MonoBehaviour
     public Transform player;
     public GameObject bulletPrefab;
     public GameObject gearPrefab;
+    public GameObject floatingTextPrefab;
 
     public float health = 100f;
     public Slider healthBarSlider;
@@ -101,6 +103,9 @@ public class MiniBoss : MonoBehaviour
         SoundManager.PlaySound(SoundType.EnemyHit);
         health -= amount;
 
+        if (floatingTextPrefab != null)
+            ShowFloatingText(Mathf.RoundToInt(Random.Range(amount - 2, amount + 2)));
+
         if (health <= 0f)
         {
             StartCoroutine(DoFinalFlashAndDie());
@@ -109,6 +114,11 @@ public class MiniBoss : MonoBehaviour
         {
             StartCoroutine(damageFlash.PlayDamageFlash());
         }
+    }
+    private void ShowFloatingText(float damage)
+    {
+        GameObject text = Instantiate(floatingTextPrefab, transform.position, Quaternion.identity);
+        text.GetComponent<TMP_Text>().text = damage.ToString();
     }
     private IEnumerator DoFinalFlashAndDie()
     {

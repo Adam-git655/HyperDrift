@@ -339,7 +339,10 @@ MonoBehaviour:
     type: 3}
   gearPrefab: {fileID: 5398001549116259696, guid: 47312e94c54f46e4d932d29de427f790,
     type: 3}
-  bulletSound: {fileID: 4684980866600764664}
+  floatingTextPrefab: {fileID: 2064094340062086010, guid: 648b831dec9efb147b0270b199ed33f1,
+    type: 3}
+  health: 20
+  gearsToSpawnOnDeath: 3
   rotationSpeed: 150
   lockOnTime: 1.5
   burstCount: 4

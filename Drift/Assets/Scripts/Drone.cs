@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using TMPro;
 using UnityEngine;
 
 public class Drone : MonoBehaviour
 {
     public Transform player;
     public GameObject gearPrefab;
+    public GameObject floatingTextPrefab;
     public float moveSpeed = 3f;
     public float health = 10f;
     [SerializeField] private int gearsToSpawnOnDeath = 1;
@@ -91,6 +93,9 @@ public class Drone : MonoBehaviour
         SoundManager.PlaySound(SoundType.EnemyHit);
         health -= amount;
 
+        if (floatingTextPrefab != null)
+            ShowFloatingText(Mathf.RoundToInt(Random.Range(amount - 2, amount + 2)));
+
         if (health <= 0f)
         {
             StartCoroutine(DoFinalFlashAndDie());
@@ -99,6 +104,12 @@ public class Drone : MonoBehaviour
         {
             StartCoroutine(damageFlash.PlayDamageFlash());
         }
+    }
+
+    private void ShowFloatingText(float damage)
+    {
+        GameObject text = Instantiate(floatingTextPrefab, transform.position, Quaternion.identity);
+        text.GetComponent<TMP_Text>().text = damage.ToString();
     }
 
     private IEnumerator DoFinalFlashAndDie()

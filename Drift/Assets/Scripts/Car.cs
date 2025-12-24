@@ -150,6 +150,7 @@ public class Car : MonoBehaviour
         {
             isGameOver = true;
             GameOverPanel.SetActive(true);
+            DriftAudioSource.Stop();
             tilemap.color = Color.gray;
             Globals.totalGears += gears;
             int minutes = Mathf.FloorToInt(Time.timeSinceLevelLoad / 60f);

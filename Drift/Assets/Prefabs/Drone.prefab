@@ -104,6 +104,8 @@ MonoBehaviour:
   player: {fileID: 0}
   gearPrefab: {fileID: 5398001549116259696, guid: 47312e94c54f46e4d932d29de427f790,
     type: 3}
+  floatingTextPrefab: {fileID: 2064094340062086010, guid: 648b831dec9efb147b0270b199ed33f1,
+    type: 3}
   moveSpeed: 4
   health: 10
   gearsToSpawnOnDeath: 1

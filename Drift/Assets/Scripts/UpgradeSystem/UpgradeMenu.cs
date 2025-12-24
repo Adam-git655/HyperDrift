@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.Tilemaps;
 
 public class UpgradeMenu : MonoBehaviour
 {
@@ -10,6 +10,8 @@ public class UpgradeMenu : MonoBehaviour
     public GameObject panel;
 
     public UpgradeOptionUI[] options;
+
+    public Tilemap tilemap;
 
     private void Awake()
     {
@@ -26,6 +28,7 @@ public class UpgradeMenu : MonoBehaviour
     {
         Time.timeScale = 0f; //pause game for upgrade
         panel.SetActive(true);
+        tilemap.color = Color.gray;
 
         //get 3 random upgrades from upgrade manager
         List<StatUpgrade> upgrades = UpgradeManager.Instance.GetRandomUpgrades(options.Length);
@@ -40,6 +43,7 @@ public class UpgradeMenu : MonoBehaviour
     public void Close()
     {
         panel.SetActive(false);
+        tilemap.color = Color.white;
         Time.timeScale = 1f; //resume game again
     }
 }

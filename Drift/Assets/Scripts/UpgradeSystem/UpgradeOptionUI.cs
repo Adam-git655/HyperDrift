@@ -9,7 +9,14 @@ public class UpgradeOptionUI : MonoBehaviour
     public Image Icon;
     public TextMeshProUGUI Name;
     public TextMeshProUGUI Value;
+    public GameObject DescriptionPanel;
+    public TextMeshProUGUI Description;
     private StatUpgrade upgrade;
+
+    private void Start()
+    {
+        DescriptionPanel.SetActive(false);
+    }
 
     //setup the button with the upgrade data
     public void Setup(StatUpgrade data)
@@ -17,6 +24,7 @@ public class UpgradeOptionUI : MonoBehaviour
         upgrade = data;
         Icon.sprite = upgrade.icon;
         Name.text = upgrade.upgradeName;
+        Description.text = upgrade.upgradeDescription;
 
         //Show value in percentage or base numbers 
         if (upgrade.modifierType == ModifierType.Additive)
@@ -29,5 +37,15 @@ public class UpgradeOptionUI : MonoBehaviour
     {
         UpgradeManager.Instance.ApplyPlayerUpgrade(upgrade);
         UpgradeMenu.Instance.Close();
+    }
+
+    public void OnPointerEnter()
+    {
+        DescriptionPanel.SetActive(true);
+    }
+
+    public void OnPointerExit()
+    {
+        DescriptionPanel.SetActive(false);
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Turret : MonoBehaviour
@@ -8,6 +9,7 @@ public class Turret : MonoBehaviour
     public Transform firePoint;
     public GameObject bulletPrefab;
     public GameObject gearPrefab;
+    public GameObject floatingTextPrefab;
     public float health = 20f;
     [SerializeField] private int gearsToSpawnOnDeath = 3;
     [SerializeField] private float rotationSpeed = 200.0f;
@@ -76,6 +78,9 @@ public class Turret : MonoBehaviour
         SoundManager.PlaySound(SoundType.EnemyHit);
         health -= amount;
 
+        if (floatingTextPrefab != null)
+            ShowFloatingText(Mathf.RoundToInt(Random.Range(amount - 2, amount + 2)));
+
         if (health <= 0f)
         {
             StartCoroutine(DoFinalFlashAndDie());
@@ -86,6 +91,11 @@ public class Turret : MonoBehaviour
         }
     }
 
+    private void ShowFloatingText(float damage)
+    {
+        GameObject text = Instantiate(floatingTextPrefab, transform.position, Quaternion.identity);
+        text.GetComponent<TMP_Text>().text = damage.ToString();
+    }
     private IEnumerator DoFinalFlashAndDie()
     {
         yield return StartCoroutine(damageFlash.PlayDamageFlash());

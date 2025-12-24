@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Tank : MonoBehaviour
 {
     public Transform player;
     public GameObject gearPrefab;
+    public GameObject floatingTextPrefab;
     public float moveSpeed = 1f;
     public float health = 15f;
     [SerializeField] private int gearsToSpawnOnDeath = 2;
@@ -113,6 +115,9 @@ public class Tank : MonoBehaviour
         SoundManager.PlaySound(SoundType.EnemyHit);
         health -= amount;
 
+        if (floatingTextPrefab != null)
+            ShowFloatingText(Mathf.RoundToInt(Random.Range(amount - 2, amount + 2)));
+
         if (health <= 0f)
         {
             StartCoroutine(DoFinalFlashAndDie());
@@ -121,6 +126,12 @@ public class Tank : MonoBehaviour
         {
             StartCoroutine(damageFlash.PlayDamageFlash());
         }
+    }
+
+    private void ShowFloatingText(float damage)
+    {
+        GameObject text = Instantiate(floatingTextPrefab, transform.position, Quaternion.identity);
+        text.GetComponent<TMP_Text>().text = damage.ToString();
     }
 
     private IEnumerator DoFinalFlashAndDie()
