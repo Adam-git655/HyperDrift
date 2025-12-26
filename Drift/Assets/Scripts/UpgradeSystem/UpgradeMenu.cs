@@ -31,7 +31,7 @@ public class UpgradeMenu : MonoBehaviour
         tilemap.color = Color.gray;
 
         //get 3 random upgrades from upgrade manager
-        List<StatUpgrade> upgrades = UpgradeManager.Instance.GetRandomUpgrades(options.Length);
+        List<Upgrade> upgrades = UpgradeManager.Instance.GetRandomUpgrades(options.Length);
 
         //setup the buttons with the upgrades
         for (int i = 0; i < options.Length; i++)

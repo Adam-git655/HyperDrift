@@ -11,4 +11,5 @@ public class PlayerBaseStats : ScriptableObject
     public float gearPickupRange;
     public float damage;
     public float driftChargeRate;
+    public int driftSegmentCount;
 }

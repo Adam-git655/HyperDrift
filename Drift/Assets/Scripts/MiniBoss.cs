@@ -4,17 +4,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MiniBoss : MonoBehaviour
+public class MiniBoss : Enemy
 {
-    public Transform player;
     public GameObject bulletPrefab;
-    public GameObject gearPrefab;
-    public GameObject floatingTextPrefab;
 
-    public float health = 100f;
     public Slider healthBarSlider;
-
-    [SerializeField] private int gearsToSpawnOnDeath = 10;
 
     public float timeBetweenPatterns = 2.0f;
     public int radialBulletCount = 16;
@@ -24,17 +18,14 @@ public class MiniBoss : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
 
-    private DamageFlash damageFlash;
-
     Car car;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();   
-        player = GameObject.FindGameObjectWithTag("Player").transform;
         car = player.GetComponent<Car>();
-        damageFlash = GetComponent<DamageFlash>();
 
         healthBarSlider = GameObject.Find("Canvas").transform.GetChild(4).GetComponent<Slider>();
         healthBarSlider.gameObject.SetActive(true);
@@ -95,39 +86,5 @@ public class MiniBoss : MonoBehaviour
             else
                 car.TakeDamage(7f);
         }
-    }
-
-    private void TakeDamage(float amount)
-    {
-        Debug.Log(amount);
-        SoundManager.PlaySound(SoundType.EnemyHit);
-        health -= amount;
-
-        if (floatingTextPrefab != null)
-            ShowFloatingText(Mathf.RoundToInt(Random.Range(amount - 2, amount + 2)));
-
-        if (health <= 0f)
-        {
-            StartCoroutine(DoFinalFlashAndDie());
-        }
-        else
-        {
-            StartCoroutine(damageFlash.PlayDamageFlash());
-        }
-    }
-    private void ShowFloatingText(float damage)
-    {
-        GameObject text = Instantiate(floatingTextPrefab, transform.position, Quaternion.identity);
-        text.GetComponent<TMP_Text>().text = damage.ToString();
-    }
-    private IEnumerator DoFinalFlashAndDie()
-    {
-        yield return StartCoroutine(damageFlash.PlayDamageFlash());
-
-        Destroy(gameObject);
-        healthBarSlider.gameObject.SetActive(false);
-
-        for (int i = 0; i < gearsToSpawnOnDeath; i++)
-            Instantiate(gearPrefab, transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), transform.position.z), transform.rotation);
     }
 }

@@ -18,13 +18,31 @@ public enum ModifierType
 }
 
 [CreateAssetMenu(menuName = "Upgrades/Stat Upgrade")]
-public class StatUpgrade : ScriptableObject
+public class StatUpgrade : Upgrade
 {
-    public string upgradeName;
-    public Sprite icon;
-    public string upgradeDescription;
-
     public StatType stat;
     public ModifierType modifierType;
     public float value;
+
+    //When a Player Stat upgrade is selected this applies that upgrade to the corresponding stat in the player(car)
+    public override void Apply(Car player)
+    {
+        //get the player stat which we are about to upgrade 
+        Stat targetStat = stat switch
+        {
+            StatType.MaxHealth => player.stats.MaxHealth,
+            StatType.MaxSpeed => player.stats.MaxSpeed,
+            StatType.AttackModeDuration => player.stats.AttackModeDuration,
+            StatType.GearPickupRange => player.stats.GearPickupRange,
+            StatType.DriftChargeRate => player.stats.DriftChargeRate,
+            _ => null
+        };
+
+        if (targetStat == null) return;
+
+        if (modifierType == ModifierType.Additive)
+            targetStat.Add(value);
+        else if (modifierType == ModifierType.Multiplicative)
+            targetStat.Multiply(value);
+    }
 }

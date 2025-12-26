@@ -9,7 +9,7 @@ public class UpgradeManager : MonoBehaviour
     public static UpgradeManager Instance;
 
     private Car player;
-    public List<StatUpgrade> allUpgrades;
+    public List<Upgrade> allUpgrades;
 
     private void Awake()
     {
@@ -22,11 +22,11 @@ public class UpgradeManager : MonoBehaviour
         player = FindObjectOfType<Car>();
     }
 
-    //Get 3 random upgrades from the entire pool of all upgrades, which we will show in the UI after level up
-    public List<StatUpgrade> GetRandomUpgrades(int count)
+    //Get 'count'(3) random upgrades from the entire pool of all upgrades, which we will show in the UI after level up
+    public List<Upgrade> GetRandomUpgrades(int count)
     {
-        List<StatUpgrade> pool = new List<StatUpgrade>(allUpgrades);
-        List<StatUpgrade> pickedUpgrades = new();
+        List<Upgrade> pool = new List<Upgrade>(allUpgrades);
+        List<Upgrade> pickedUpgrades = new();
 
         for (int i = 0; i < count && pool.Count > 0; i++)
         {
@@ -38,26 +38,8 @@ public class UpgradeManager : MonoBehaviour
         return pickedUpgrades;
     }
 
-
-    //When a Player Stat upgrade is selected this applies that upgrade to the corresponding stat in the player(car)
-    public void ApplyPlayerUpgrade(StatUpgrade upgrade)
+    public void ApplyUpgrade(Upgrade upgrade)
     {
-        //get the player stat which we are about to upgrade 
-        Stat stat = upgrade.stat switch
-        {
-            StatType.MaxHealth => player.stats.MaxHealth,
-            StatType.MaxSpeed => player.stats.MaxSpeed,
-            StatType.AttackModeDuration => player.stats.AttackModeDuration,
-            StatType.GearPickupRange => player.stats.GearPickupRange,
-            StatType.DriftChargeRate => player.stats.DriftChargeRate,
-            _ => null
-        };
-
-        if (stat == null) return;
-
-        if (upgrade.modifierType == ModifierType.Additive)
-            stat.Add(upgrade.value);
-        else if (upgrade.modifierType == ModifierType.Multiplicative)
-            stat.Multiply(upgrade.value);
+        upgrade.Apply(player);
     }
 }

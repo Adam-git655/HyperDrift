@@ -186,8 +186,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d9046c7cf327a54986c984f14c69eff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destroyTime: 3
-  heightAboveEnemy: 1
+  destroyTime: 1
+  Offset: {x: 0, y: 1, z: 0}
+  RandomizeIntensity: {x: 0.5, y: 0, z: 0}
 --- !u!95 &6634884555711471582
 Animator:
   serializedVersion: 5

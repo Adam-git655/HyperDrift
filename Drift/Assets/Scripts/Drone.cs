@@ -4,40 +4,34 @@ using System.Threading;
 using TMPro;
 using UnityEngine;
 
-public class Drone : MonoBehaviour
+public class Drone : Enemy
 {
-    public Transform player;
-    public GameObject gearPrefab;
-    public GameObject floatingTextPrefab;
     public float moveSpeed = 3f;
-    public float health = 10f;
-    [SerializeField] private int gearsToSpawnOnDeath = 1;
 
     private readonly float attackRange = 0.7f;
     public float attackCooldown = 3f;
-    private bool isAttacking = false;
+    private bool isAttacking;
     private float attackTimer;
 
     private Rigidbody2D rb;
-
-    private DamageFlash damageFlash;
-
     Car car;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         rb = GetComponent<Rigidbody2D>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-        isAttacking = false;
         car = player.GetComponent<Car>();
-        damageFlash = GetComponent<DamageFlash>();
+
+        isAttacking = false;
     }
 
     private void Update()
     {
+        if (player == null) return;
+
         float distanceToPlayer = Vector2.Distance(player.position, transform.position);
 
-        if (player != null && distanceToPlayer > 0.2f)
+        if (distanceToPlayer > 0.2f)
         {
             Vector3 dir = (player.position - transform.position).normalized;
 
@@ -86,39 +80,5 @@ public class Drone : MonoBehaviour
                 car.TakeDamage(1.5f);
             }
         }
-    }
-
-    private void TakeDamage(float amount)
-    {
-        SoundManager.PlaySound(SoundType.EnemyHit);
-        health -= amount;
-
-        if (floatingTextPrefab != null)
-            ShowFloatingText(Mathf.RoundToInt(Random.Range(amount - 2, amount + 2)));
-
-        if (health <= 0f)
-        {
-            StartCoroutine(DoFinalFlashAndDie());
-        }
-        else
-        {
-            StartCoroutine(damageFlash.PlayDamageFlash());
-        }
-    }
-
-    private void ShowFloatingText(float damage)
-    {
-        GameObject text = Instantiate(floatingTextPrefab, transform.position, Quaternion.identity);
-        text.GetComponent<TMP_Text>().text = damage.ToString();
-    }
-
-    private IEnumerator DoFinalFlashAndDie()
-    {
-        yield return StartCoroutine(damageFlash.PlayDamageFlash());
-
-        for (int i = 0; i < gearsToSpawnOnDeath; i++)
-            Instantiate(gearPrefab, transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), transform.position.z), transform.rotation);
-        
-        Destroy(gameObject);
     }
 }

@@ -1866,6 +1866,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 71fdf8b26e9e02b4b92b662b2170cfea, type: 2}
   - {fileID: 11400000, guid: dd8c18dc86447634f97c0bfcd6ee7749, type: 2}
   - {fileID: 11400000, guid: c119565f0c9302b4a83a00bb10cf3b8d, type: 2}
+  - {fileID: 11400000, guid: 34cdb454004a6514693a3b657a181b90, type: 2}
 --- !u!4 &1023588717
 Transform:
   m_ObjectHideFlags: 0
@@ -706878,6 +706879,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1823250562}
   m_CullTransparentMesh: 1
+--- !u!1 &1928416171 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1119853731955410, guid: 545816ba7c4181a449771b82b3b2f0b2,
+    type: 3}
+  m_PrefabInstance: {fileID: 2069244328}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2004479006
 GameObject:
   m_ObjectHideFlags: 0
@@ -707272,6 +707279,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
         type: 3}
+      propertyPath: trackSegCount
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
       propertyPath: GearsCountText
       value: 
       objectReference: {fileID: 172404863}
@@ -707528,6 +707540,10 @@ PrefabInstance:
     - {fileID: 6463429959217016042, guid: 545816ba7c4181a449771b82b3b2f0b2, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1119853731955410, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 2069244337}
     - targetCorrespondingSourceObject: {fileID: 890346696524011772, guid: 545816ba7c4181a449771b82b3b2f0b2,
         type: 3}
       insertIndex: -1
@@ -707570,12 +707586,25 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 2069244328}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1928416171}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69d54f36cf9b9f14b86356cb7ef46dc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2069244337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1928416171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7ca8650dc4673146ae365c111fd1d9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxWeapons: 6
 --- !u!1 &2080261352
 GameObject:
   m_ObjectHideFlags: 0

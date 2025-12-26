@@ -10,6 +10,7 @@ public class PlayerStatsRuntime
     public Stat GearPickupRange;
     public Stat Damage;
     public Stat DriftChargeRate;
+    public Stat DriftSegmentCount;
 
     public PlayerStatsRuntime(PlayerBaseStats baseStats)
     {
@@ -19,5 +20,6 @@ public class PlayerStatsRuntime
         GearPickupRange = new Stat(baseStats.gearPickupRange);
         Damage = new Stat(baseStats.damage);
         DriftChargeRate = new Stat(baseStats.driftChargeRate);
+        DriftSegmentCount = new Stat(baseStats.driftSegmentCount);
     }
 }

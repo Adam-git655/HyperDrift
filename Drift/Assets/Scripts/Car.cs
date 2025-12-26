@@ -50,6 +50,7 @@ public class Car : MonoBehaviour
     public Sprite GreyEnergyBarSprite;
     public AudioSource EngineAudioSource;
     public AudioSource DriftAudioSource;
+    public PlayerWeapons weaponController;
 
     //Internals/States/Values
     private Rigidbody2D rb;
@@ -74,7 +75,6 @@ public class Car : MonoBehaviour
     private readonly float maxDriftCharge = 100f;
 
     public float trackSegLength = .15f;
-    public int trackSegCount = 100;
     private List<WheelTrack> m_WheelTracks;
     private Vector3 m_LastPos;
 
@@ -99,6 +99,7 @@ public class Car : MonoBehaviour
 
         stats.MaxHealth.OnValueChanged += OnMaxHealthChanged;
         stats.MaxSpeed.OnValueChanged += OnMaxSpeedChanged;
+        stats.DriftSegmentCount.OnValueChanged += OnDriftSegmentCountChanged;
     }
     private void OnEnable()
     {
@@ -117,9 +118,11 @@ public class Car : MonoBehaviour
 
         rb = GetComponent<Rigidbody2D>();
         damageFlash = GetComponentInChildren<DamageFlash>();
+        weaponController = GetComponent<PlayerWeapons>();
         HealthBarSlider.maxValue = stats.MaxHealth.Value;
         carHealth = stats.MaxHealth.Value;
         driftMeterSlider.maxValue = maxDriftCharge;
+        trailMaterial.color = Color.black;
 
         velDir = new GameObject("VelocityDirection").transform;
         velDir.parent = transform;
@@ -131,7 +134,7 @@ public class Car : MonoBehaviour
         for (int i = 0; i < wheels.Length; i++)
         {
             WheelTrack wheel = new WheelTrack();
-            wheel.Init(wheels[i], trailMaterial, trackSegCount);
+            wheel.Init(wheels[i], trailMaterial, (int)stats.DriftSegmentCount.Value);
             m_WheelTracks.Add(wheel);
         }
 
@@ -223,7 +226,6 @@ public class Car : MonoBehaviour
 
             if (!isInAttackMode)
             {
-                Debug.Log(stats.DriftChargeRate.Value);
                 driftChargeMeter += stats.DriftChargeRate.Value * Time.deltaTime;
                 driftChargeMeter = Mathf.Min(driftChargeMeter, maxDriftCharge);
             }
@@ -305,6 +307,14 @@ public class Car : MonoBehaviour
     { 
         float speedFractionalChange = ((newValue - oldValue) / oldValue);
         stats.Damage.Multiply(1 + speedFractionalChange * 1.8f);
+    }
+
+    private void OnDriftSegmentCountChanged(float oldValue, float newValue)
+    {
+        foreach (var wheel in m_WheelTracks)
+        {
+            wheel.SetSegmentCount((int)newValue);
+        }
     }
 
     public void TakeDamage(float damage)
@@ -397,6 +407,20 @@ public class Car : MonoBehaviour
         return Mathf.Lerp(destMin, destMax, Mathf.InverseLerp(srcMin, srcMax, val));
     }
 
+    public void SetTrailColor(Color color)
+    {
+        trailMaterial.color = color;
+    }
+
+    public List<Vector2> GetAllTrailPoints()
+    {
+        List<Vector2> allPoints = new List<Vector2>();
+        foreach (var wheel in m_WheelTracks)
+            allPoints.AddRange(wheel.GetPoints());
+
+        return allPoints;
+    }
+
     private class WheelTrack
     {
         private List<Transform> lines;
@@ -417,7 +441,12 @@ public class Car : MonoBehaviour
             lastPos = tf.position;
         }
 
-        public void AddSegment(Color color)
+        public void SetSegmentCount(int segCount)
+        {
+            segmentCount = segCount;
+        }
+
+        public void AddSegment(Color alphaColor)
         {
             if (lines.Count < segmentCount)
             {
@@ -433,10 +462,22 @@ public class Car : MonoBehaviour
             LineRenderer line = lines[lineIndex].GetComponent<LineRenderer>();
             line.SetPosition(0, transform.position);
             line.SetPosition(1, lastPos);
-            line.startColor = line.endColor = color;
+            line.startColor = line.endColor = alphaColor;
 
             lastPos = transform.position;
             lineIndex = (lineIndex + 1) % segmentCount;
+        }
+
+        public List<Vector2> GetPoints()
+        {
+            List<Vector2> points = new List<Vector2>();
+            foreach (var line in lines)
+            {
+                LineRenderer lr = line.GetComponent<LineRenderer>();
+                points.Add(lr.GetPosition(0));
+                points.Add(lr.GetPosition(1));
+            }
+            return points;
         }
     }
 }
