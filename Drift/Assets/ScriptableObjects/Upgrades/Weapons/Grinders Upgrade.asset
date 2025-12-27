@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7af74c882fa2fa04cb4657a63aa3732d, type: 3}
-  m_Name: Fire Trail Upgrade
+  m_Name: Grinders Upgrade
   m_EditorClassIdentifier: 
-  upgradeName: Fire Trail
-  icon: {fileID: 21300000, guid: 56427ab2bd8fdc34190e90b6e0f3115b, type: 3}
-  upgradeDescription: Adds fire to drift marks making enemies burn on contact
-  weaponType: 0
-  weaponPrefab: {fileID: 3776580314424473845, guid: 0d950e42339b3fb45aa956cd83378d63,
+  upgradeName: Grinders
+  icon: {fileID: 21300000, guid: d4134166f19119d48a3c46e487af13bb, type: 3}
+  upgradeDescription: Rotating Sawblades which damage enemies
+  weaponType: 1
+  weaponPrefab: {fileID: 6065298340050168991, guid: fbee791dd52b9714c8f7ea933b58cceb,
     type: 3}

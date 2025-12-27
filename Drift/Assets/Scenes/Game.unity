@@ -1867,6 +1867,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dd8c18dc86447634f97c0bfcd6ee7749, type: 2}
   - {fileID: 11400000, guid: c119565f0c9302b4a83a00bb10cf3b8d, type: 2}
   - {fileID: 11400000, guid: 34cdb454004a6514693a3b657a181b90, type: 2}
+  - {fileID: 11400000, guid: 09aa92936968edb4f912aa1ab7fd2b27, type: 2}
 --- !u!4 &1023588717
 Transform:
   m_ObjectHideFlags: 0
@@ -707282,6 +707283,11 @@ PrefabInstance:
       propertyPath: trackSegCount
       value: 70
       objectReference: {fileID: 0}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
+      propertyPath: trailMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: dbb815fe5fcd9a44d8fdc504551abafd, type: 2}
     - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
         type: 3}
       propertyPath: GearsCountText

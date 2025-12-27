@@ -9,10 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9385b63368c76db48a0640e33ebe6c32, type: 3}
-  m_Name: FireTrail
+  m_Script: {fileID: 11500000, guid: 4d6bfe38e3383f64a9c2541be0e7f63e, type: 3}
+  m_Name: Grinders
   m_EditorClassIdentifier: 
-  baseDamage: 2
-  baseCooldown: 2
-  damageRadius: 0.4
-  trailColor: {r: 0.81886786, g: 0.28384942, b: 0, a: 1}
+  baseDamage: 1
+  baseCooldown: 0.5
+  size: 1.5
+  numGrinders: 1
+  speed: 2
+  radius: 1.5
