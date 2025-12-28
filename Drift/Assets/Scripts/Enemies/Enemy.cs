@@ -9,7 +9,10 @@ public abstract class Enemy : MonoBehaviour
     public float health;
     public GameObject gearPrefab;
     public GameObject floatingTextPrefab;
+    public GameObject salvageCorePrefab;
     [SerializeField] protected int gearsToSpawnOnDeath = 1;
+    [SerializeField] protected float salvageCoreDropChance = 0.1f;
+    [SerializeField] protected int salvageCoresToSpawnOnDeath = 1;
 
     protected Transform player;
     protected DamageFlash damageFlash;
@@ -62,9 +65,17 @@ public abstract class Enemy : MonoBehaviour
     {
         yield return StartCoroutine(damageFlash.PlayDamageFlash());
 
+        //spawn gears
         for (int i = 0; i < gearsToSpawnOnDeath; i++)
             Instantiate(gearPrefab, transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), transform.position.z), transform.rotation);
 
+        //spawn salvage cores
+        if (Random.value <= salvageCoreDropChance)
+        {
+            for (int i = 0; i < salvageCoresToSpawnOnDeath; i++)
+                Instantiate(salvageCorePrefab, transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), transform.position.z), transform.rotation);
+        }
+            
         Destroy(gameObject);
     }
 }

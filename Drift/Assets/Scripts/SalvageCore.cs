@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gear : Currency
+public class SalvageCore : Currency
 {
     protected override void OnPickUp()
     {
-        GearGaugeManager.Instance.AddGearExp(1);
+        player.GetComponent<Car>().salvageCores += 1;
         Destroy(gameObject);
     }
 }
-       

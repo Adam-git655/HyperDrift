@@ -7,6 +7,7 @@ TagManager:
   - Gear
   - Obstacle
   - Enemy
+  - SalvageCore
   layers:
   - Default
   - TransparentFX

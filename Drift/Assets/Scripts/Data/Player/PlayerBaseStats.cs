@@ -8,7 +8,7 @@ public class PlayerBaseStats : ScriptableObject
     public float maxHealth;
     public float maxSpeed;
     public float attackModeDuration;
-    public float gearPickupRange;
+    public float pickupRange;
     public float damage;
     public float driftChargeRate;
     public int driftSegmentCount;

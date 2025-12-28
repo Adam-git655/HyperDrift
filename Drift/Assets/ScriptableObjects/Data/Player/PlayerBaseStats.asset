@@ -15,7 +15,7 @@ MonoBehaviour:
   maxHealth: 100
   maxSpeed: 8
   attackModeDuration: 10
-  gearPickupRange: 2
+  pickupRange: 2
   damage: 10
   driftChargeRate: 25
   driftSegmentCount: 70

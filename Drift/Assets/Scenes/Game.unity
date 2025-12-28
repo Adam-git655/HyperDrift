@@ -398,7 +398,7 @@ GameObject:
   - component: {fileID: 172404864}
   - component: {fileID: 172404863}
   m_Layer: 5
-  m_Name: GearCountText
+  m_Name: SalvageCoreCountText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -420,7 +420,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 846.07, y: 394.61002}
+  m_AnchoredPosition: {x: 587.07, y: 423.61002}
   m_SizeDelta: {x: 128.3229, y: 86.597}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &172404863
@@ -456,7 +456,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '20
+  m_Text: '0
 
 '
 --- !u!222 &172404864
@@ -479,7 +479,7 @@ GameObject:
   - component: {fileID: 206202836}
   - component: {fileID: 206202835}
   m_Layer: 5
-  m_Name: GearCollectedCount
+  m_Name: SalvageCoresCollectCountDeathText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2100,7 +2100,7 @@ GameObject:
   - component: {fileID: 1128623442}
   - component: {fileID: 1128623441}
   m_Layer: 5
-  m_Name: GearIcon
+  m_Name: SalvageCoreIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2122,7 +2122,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 739, y: 395}
+  m_AnchoredPosition: {x: 480, y: 424}
   m_SizeDelta: {x: 85.8246, y: 85.8246}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1128623441
@@ -2145,7 +2145,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f12447983afd2284ca78e172e1d3e382, type: 3}
+  m_Sprite: {fileID: -97124095, guid: 1520abf0abd119746bf1970d818d3dce, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -705693,7 +705693,7 @@ GameObject:
   - component: {fileID: 1439987423}
   - component: {fileID: 1439987422}
   m_Layer: 5
-  m_Name: GearsCollectedText
+  m_Name: SalvageCoresCollectedText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -705751,7 +705751,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'GEARS COLLECTED:'
+  m_Text: 'CORES COLLECTED:'
 --- !u!222 &1439987423
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -707315,6 +707315,11 @@ PrefabInstance:
       objectReference: {fileID: 1503834182}
     - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
         type: 3}
+      propertyPath: salvageCoresCount
+      value: 
+      objectReference: {fileID: 172404863}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
       propertyPath: timeSurvivedCount
       value: 
       objectReference: {fileID: 210670719}
@@ -707355,6 +707360,11 @@ PrefabInstance:
       propertyPath: steeringWheelController
       value: 
       objectReference: {fileID: 2043065132}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
+      propertyPath: salvageCoresCollectedCountOnDeathText
+      value: 
+      objectReference: {fileID: 206202835}
     - target: {fileID: 800252026511224605, guid: 545816ba7c4181a449771b82b3b2f0b2,
         type: 3}
       propertyPath: m_Color.b
@@ -707621,12 +707631,12 @@ GameObject:
   m_Component:
   - component: {fileID: 2080261353}
   m_Layer: 5
-  m_Name: GearCounter
+  m_Name: SalvageCoreCounter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2080261353
 RectTransform:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ public enum StatType
     MaxHealth,
     MaxSpeed,
     AttackModeDuration,
-    GearPickupRange,
+    PickupRange,
     DriftChargeRate
 }
 
@@ -33,7 +33,7 @@ public class StatUpgrade : Upgrade
             StatType.MaxHealth => player.stats.MaxHealth,
             StatType.MaxSpeed => player.stats.MaxSpeed,
             StatType.AttackModeDuration => player.stats.AttackModeDuration,
-            StatType.GearPickupRange => player.stats.GearPickupRange,
+            StatType.PickupRange => player.stats.PickupRange,
             StatType.DriftChargeRate => player.stats.DriftChargeRate,
             _ => null
         };

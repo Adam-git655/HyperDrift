@@ -101,14 +101,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e8c4aaf03c2b6340ab27f1efc1c8846, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  health: 10
   gearPrefab: {fileID: 5398001549116259696, guid: 47312e94c54f46e4d932d29de427f790,
     type: 3}
   floatingTextPrefab: {fileID: 2064094340062086010, guid: 648b831dec9efb147b0270b199ed33f1,
     type: 3}
-  moveSpeed: 4
-  health: 10
+  salvageCorePrefab: {fileID: 8324902611946007377, guid: 07488a5f02f1d2b49b750199873169a7,
+    type: 3}
   gearsToSpawnOnDeath: 1
+  salvageCoreDropChance: 0.1
+  moveSpeed: 4
   attackCooldown: 3
 --- !u!114 &58034680760268558
 MonoBehaviour:

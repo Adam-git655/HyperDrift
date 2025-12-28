@@ -8,7 +8,7 @@ using UnityEngine.Tilemaps;
 
 public static class Globals
 {
-    public static int totalGears = 0;
+    public static int totalSalvageCores = 0;
 }
 
 public class Car : MonoBehaviour
@@ -16,7 +16,7 @@ public class Car : MonoBehaviour
     //Stats
     public PlayerBaseStats baseStats;
     public PlayerStatsRuntime stats;
-    public int gears = 0;
+    public int salvageCores = 0;
 
     [Header("Speed")]
     public float accelerationTime = 1.2f; //seconds to reach max speed
@@ -36,11 +36,11 @@ public class Car : MonoBehaviour
     public GameObject attackModeButtonUI;
     public GameObject GameOverPanel;
     public Text timeSurvivedCount;
-    public Text gearsCollectedCount;
+    public Text salvageCoresCollectedCountOnDeathText;
     public Tilemap tilemap;
     public Slider HealthBarSlider;
     public ParticleSystem ElectricShockFx;
-    public Text GearsCountText;
+    public Text salvageCoresCount;
     public GameObject shieldAuraVfx;
     public Slider driftMeterSlider;
     public Transform[] wheels;
@@ -155,15 +155,15 @@ public class Car : MonoBehaviour
             GameOverPanel.SetActive(true);
             DriftAudioSource.Stop();
             tilemap.color = Color.gray;
-            Globals.totalGears += gears;
+            Globals.totalSalvageCores += salvageCores;
             int minutes = Mathf.FloorToInt(Time.timeSinceLevelLoad / 60f);
             int seconds = Mathf.FloorToInt(Time.timeSinceLevelLoad % 60f);
             timeSurvivedCount.text = $"{minutes}m {seconds}s";
-            gearsCollectedCount.text = gears.ToString();
+            salvageCoresCollectedCountOnDeathText.text = salvageCores.ToString();
             Time.timeScale = 0f;
         }
 
-        GearsCountText.text = gears.ToString();
+        salvageCoresCount.text = salvageCores.ToString();
 
         //MOVEMENT
         turnInput = canMove ? steerInput : 0f;
