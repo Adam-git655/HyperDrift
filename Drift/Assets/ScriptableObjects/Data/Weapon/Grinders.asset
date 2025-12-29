@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseDamage: 1
   baseCooldown: 0.5
-  size: 1.5
+  size: 1.2
   numGrinders: 1
   speed: 2
   radius: 1.5

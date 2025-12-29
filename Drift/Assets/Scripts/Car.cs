@@ -8,6 +8,7 @@ using UnityEngine.Tilemaps;
 
 public static class Globals
 {
+    public static PlayerMetaProgressionStats playerMeta = new PlayerMetaProgressionStats();
     public static int totalSalvageCores = 0;
 }
 
@@ -17,7 +18,6 @@ public class Car : MonoBehaviour
     public PlayerBaseStats baseStats;
     public PlayerStatsRuntime stats;
     public int salvageCores = 0;
-
     [Header("Speed")]
     public float accelerationTime = 1.2f; //seconds to reach max speed
     public float decelRate = 4f;
@@ -85,7 +85,7 @@ public class Car : MonoBehaviour
     private void Awake()
     {
         //set current stats to runtime stats
-        stats = new PlayerStatsRuntime(baseStats);
+        stats = new PlayerStatsRuntime(baseStats, Globals.playerMeta);
 
         controls = new CarControls();
 
@@ -319,7 +319,11 @@ public class Car : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        carHealth -= damage;
+        float reductionPercent = stats.DamageReduction.Value;
+        reductionPercent = Mathf.Clamp(reductionPercent, 0f, 0.9f);
+        float finalDamage = damage * (1f - reductionPercent);
+
+        carHealth -= finalDamage;
         SoundManager.PlaySound(SoundType.CarDamage);
         StartCoroutine(damageFlash.PlayDamageFlash());
     }

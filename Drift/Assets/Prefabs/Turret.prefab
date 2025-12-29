@@ -338,9 +338,11 @@ MonoBehaviour:
     type: 3}
   floatingTextPrefab: {fileID: 2064094340062086010, guid: 648b831dec9efb147b0270b199ed33f1,
     type: 3}
-  salvageCorePrefab: {fileID: 0}
+  salvageCorePrefab: {fileID: 8324902611946007377, guid: 07488a5f02f1d2b49b750199873169a7,
+    type: 3}
   gearsToSpawnOnDeath: 3
   salvageCoreDropChance: 0.25
+  salvageCoresToSpawnOnDeath: 1
   firePoint: {fileID: 652192853365342802}
   bulletPrefab: {fileID: 383317757599012517, guid: 5aa1b9989d9a0a84e8dec2f75364629c,
     type: 3}

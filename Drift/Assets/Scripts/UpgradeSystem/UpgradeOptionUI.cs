@@ -37,7 +37,7 @@ public class UpgradeOptionUI : MonoBehaviour
         }
         else
         {
-            Value.text = "+1";
+            Value.text = "+1 LVL";
         }
     }
 

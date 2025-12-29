@@ -10,6 +10,7 @@ public class PlayerBaseStats : ScriptableObject
     public float attackModeDuration;
     public float pickupRange;
     public float damage;
+    public float damageReduction;
     public float driftChargeRate;
     public int driftSegmentCount;
 }

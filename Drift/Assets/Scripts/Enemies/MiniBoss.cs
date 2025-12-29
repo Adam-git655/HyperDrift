@@ -87,4 +87,10 @@ public class MiniBoss : Enemy
                 car.TakeDamage(7f);
         }
     }
+
+    protected override IEnumerator DoFinalFlashAndDie()
+    {
+        healthBarSlider.gameObject.SetActive(false);
+        return base.DoFinalFlashAndDie();
+    }
 }

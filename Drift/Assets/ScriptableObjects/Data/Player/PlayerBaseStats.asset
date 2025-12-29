@@ -17,5 +17,6 @@ MonoBehaviour:
   attackModeDuration: 10
   pickupRange: 2
   damage: 10
+  damageReduction: 0
   driftChargeRate: 25
   driftSegmentCount: 70
