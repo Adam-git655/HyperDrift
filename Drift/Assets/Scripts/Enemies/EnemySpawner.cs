@@ -50,7 +50,7 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float elapsedTime = Time.timeSinceLevelLoad;
+        float elapsedTime = Globals.gameplayTime;
         float difficultyPercent = Mathf.Clamp01(elapsedTime/ difficultyRampUpTime);
 
         foreach(var enemy in enemyTypes)

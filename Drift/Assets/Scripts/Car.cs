@@ -8,8 +8,17 @@ using UnityEngine.Tilemaps;
 
 public static class Globals
 {
+    public static float gameplayTime = 0f;
+    public static bool gameplayTimerRunning = false;
+
     public static PlayerMetaProgressionStats playerMeta = new PlayerMetaProgressionStats();
     public static int totalSalvageCores = 0;
+
+    public static void StartGameplayTimer()
+    {
+        gameplayTime = 0f;
+        gameplayTimerRunning = true;
+    }
 }
 
 public class Car : MonoBehaviour
@@ -103,12 +112,28 @@ public class Car : MonoBehaviour
     }
     private void OnEnable()
     {
-        controls.Driving.Enable();
+        EnableInput();
     }
 
     private void OnDisable()
     {
+        DisableInput();
+    }
+
+    public void EnableInput()
+    {
+        canMove = true;
+        controls.Driving.Enable();
+    }
+
+    public void DisableInput()
+    {
+        canMove = false;
         controls.Driving.Disable();
+
+        steerInput = 0f;
+        driftPressed = false;
+        attackModePressed = false;
     }
 
     void Start()
@@ -148,6 +173,11 @@ public class Car : MonoBehaviour
     {
         HealthBarSlider.value = carHealth;
 
+        if (Globals.gameplayTimerRunning)
+        {
+            Globals.gameplayTime += Time.deltaTime;
+        }
+
         //On death 
         if (carHealth <= 0f && !isGameOver)
         {
@@ -156,9 +186,9 @@ public class Car : MonoBehaviour
             DriftAudioSource.Stop();
             tilemap.color = Color.gray;
             Globals.totalSalvageCores += salvageCores;
-            int minutes = Mathf.FloorToInt(Time.timeSinceLevelLoad / 60f);
-            int seconds = Mathf.FloorToInt(Time.timeSinceLevelLoad % 60f);
-            timeSurvivedCount.text = $"{minutes}m {seconds}s";
+            int minutes = Mathf.FloorToInt(Globals.gameplayTime / 60f);
+            int seconds = Mathf.FloorToInt(Globals.gameplayTime % 60f);
+            timeSurvivedCount.text = $"{minutes} min {seconds} sec";
             salvageCoresCollectedCountOnDeathText.text = salvageCores.ToString();
             Time.timeScale = 0f;
         }
@@ -263,7 +293,6 @@ public class Car : MonoBehaviour
                 driftChargeMeter = 0f;
                 driftMeterSlider.fillRect.GetComponent<Image>().sprite = GreyEnergyBarSprite;
                 shieldAuraVfx.SetActive(false);
-                Debug.Log("ATTACK MODE DISABLED :(");
             }
         }
 
@@ -376,7 +405,6 @@ public class Car : MonoBehaviour
         isInAttackMode = true;
         shieldAuraVfx.SetActive(true);
         attackModeTimer = stats.AttackModeDuration.Value;
-        Debug.Log("ATTACK MODE BABY");
     }
 
     public void GetElectrocuted()
