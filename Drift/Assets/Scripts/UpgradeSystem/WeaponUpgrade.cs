@@ -5,7 +5,8 @@ using UnityEngine;
 public enum WeaponType
 { 
     FireTrail,
-    Grinders
+    Grinders,
+    EMPPulse
 }
 
 

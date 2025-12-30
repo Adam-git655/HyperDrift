@@ -5,6 +5,8 @@ using UnityEngine;
 
 public abstract class Enemy : MonoBehaviour
 {
+    public static readonly List<Enemy> AllEnemies = new List<Enemy>();
+
     [Header("Enemy Settings")]
     public float health;
     public GameObject gearPrefab;
@@ -16,6 +18,18 @@ public abstract class Enemy : MonoBehaviour
 
     protected Transform player;
     protected DamageFlash damageFlash;
+
+    protected bool canMove = true;
+
+    private void OnEnable()
+    {
+        AllEnemies.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        AllEnemies.Remove(this);
+    }
 
     protected virtual void Awake()
     {
@@ -53,6 +67,13 @@ public abstract class Enemy : MonoBehaviour
         {
             StartCoroutine(damageFlash.PlayDamageFlash());
         }
+    }
+
+    public virtual IEnumerator Stun(float duration)
+    {
+        canMove = false;
+        yield return new WaitForSeconds(duration);
+        canMove = true;
     }
 
     protected void ShowFloatingText(float damage)

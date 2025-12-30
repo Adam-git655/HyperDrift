@@ -27,7 +27,7 @@ public class Drone : Enemy
 
     private void Update()
     {
-        if (player == null) return;
+        if (player == null || !canMove) return;
 
         float distanceToPlayer = Vector2.Distance(player.position, transform.position);
 
@@ -65,6 +65,12 @@ public class Drone : Enemy
                 attackTimer = 0f;
             }
         }
+    }
+
+    public override IEnumerator Stun(float duration)
+    {
+        rb.velocity = Vector2.zero;
+        return base.Stun(duration);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

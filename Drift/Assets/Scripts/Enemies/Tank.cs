@@ -31,7 +31,7 @@ public class Tank : Enemy
 
     private void Update()
     {
-        if (player == null) return;
+        if (player == null || !canMove) return;
 
         float distanceToPlayer = Vector2.Distance(player.position, transform.position);
 
@@ -51,6 +51,12 @@ public class Tank : Enemy
                 MoveTowardsPlayer();
             }
         }
+    }
+
+    public override IEnumerator Stun(float duration)
+    {
+        rb.velocity = Vector2.zero;
+        return base.Stun(duration);
     }
 
     private void MoveTowardsPlayer()

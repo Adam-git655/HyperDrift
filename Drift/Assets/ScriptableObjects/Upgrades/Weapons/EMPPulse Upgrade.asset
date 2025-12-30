@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7af74c882fa2fa04cb4657a63aa3732d, type: 3}
+  m_Name: EMPPulse Upgrade
+  m_EditorClassIdentifier: 
+  upgradeName: EMP Pulse
+  icon: {fileID: 21300000, guid: 8e6f7a218019a2e43a5ad7b370ca80c4, type: 3}
+  upgradeDescription: Periodically emit an EMP Shockwave stunning all enemies on
+    screen
+  weaponType: 2
+  weaponPrefab: {fileID: 6010101581366000994, guid: 8e155de25e304c04fb3d717e3ab75b6b,
+    type: 3}

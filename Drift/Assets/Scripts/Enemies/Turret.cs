@@ -22,7 +22,7 @@ public class Turret : Enemy
 
     private void Update()
     {
-        if (player == null) return;
+        if (player == null || !canMove) return;
 
         Vector2 dir = (player.position - transform.position).normalized;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90;

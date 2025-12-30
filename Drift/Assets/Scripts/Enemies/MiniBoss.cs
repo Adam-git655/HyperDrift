@@ -56,6 +56,8 @@ public class MiniBoss : Enemy
 
     private void Update()
     {
+        if (player == null || !canMove) return;
+
         float distanceToPlayer = Vector2.Distance(player.position, transform.position);
 
         healthBarSlider.value = health;
@@ -73,6 +75,12 @@ public class MiniBoss : Enemy
         {
             rb.velocity = Vector2.zero;
         }
+    }
+
+    public override IEnumerator Stun(float duration)
+    {
+        rb.velocity = Vector2.zero;
+        return base.Stun(duration);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

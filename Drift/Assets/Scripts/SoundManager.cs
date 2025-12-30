@@ -8,6 +8,7 @@ public enum SoundType
     EnemyHit,
     CarDamage,
     BulletFire,
+    ShockWave
 }
 
 [RequireComponent(typeof(AudioSource)), ExecuteInEditMode]
