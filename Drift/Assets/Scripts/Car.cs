@@ -90,6 +90,7 @@ public class Car : MonoBehaviour
     //Controls/Input
     private CarControls controls;
     public SteeringWheelController steeringWheelController;
+    public InputAction AnyKey;
 
     private void Awake()
     {
@@ -167,6 +168,17 @@ public class Car : MonoBehaviour
         ElectricShockFx.gameObject.SetActive(false);
         attackModeButtonUI.SetActive(false);
         GameOverPanel.SetActive(false);
+
+        StartCoroutine(PressAnyKeyBeforeStarting());
+    }
+
+    private IEnumerator PressAnyKeyBeforeStarting()
+    {
+        DisableInput();
+        yield return new WaitUntil(() => Keyboard.current.anyKey.wasPressedThisFrame
+                                 || Mouse.current.leftButton.wasPressedThisFrame
+                                 || Gamepad.current?.buttonSouth.wasPressedThisFrame == true);
+        EnableInput();
     }
 
     void Update()
