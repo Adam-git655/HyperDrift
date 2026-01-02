@@ -208,7 +208,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 679824651, guid: 1855d808a213aa945866b960369ffc78, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.93962264, g: 0.93962264, b: 0.93962264, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -330,9 +330,12 @@ MonoBehaviour:
     type: 3}
   salvageCorePrefab: {fileID: 8324902611946007377, guid: 07488a5f02f1d2b49b750199873169a7,
     type: 3}
+  explosionEffectPrefab: {fileID: 5166826540277232285, guid: b56de119951ce884b923ee9a37d152fd,
+    type: 3}
   gearsToSpawnOnDeath: 10
   salvageCoreDropChance: 0.8
   salvageCoresToSpawnOnDeath: 5
+  spawnRadiusOnDeath: 0.5
   bulletPrefab: {fileID: 383317757599012517, guid: 5aa1b9989d9a0a84e8dec2f75364629c,
     type: 3}
   healthBarSlider: {fileID: 0}

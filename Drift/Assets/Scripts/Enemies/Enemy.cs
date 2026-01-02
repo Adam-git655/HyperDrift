@@ -12,9 +12,11 @@ public abstract class Enemy : MonoBehaviour
     public GameObject gearPrefab;
     public GameObject floatingTextPrefab;
     public GameObject salvageCorePrefab;
+    public GameObject explosionEffectPrefab;
     [SerializeField] protected int gearsToSpawnOnDeath = 1;
     [SerializeField] protected float salvageCoreDropChance = 0.1f;
     [SerializeField] protected int salvageCoresToSpawnOnDeath = 1;
+    [SerializeField] protected float spawnRadiusOnDeath = 0.2f;
 
     protected Transform player;
     protected DamageFlash damageFlash;
@@ -45,7 +47,7 @@ public abstract class Enemy : MonoBehaviour
 
     public virtual void TakeDamage(float amount)
     {
-        SoundManager.PlaySound(SoundType.EnemyHit);
+        SoundManager.PlaySound(SoundType.EnemyHit, 1.5f);
         health -= amount;
 
         if (floatingTextPrefab != null)
@@ -86,15 +88,19 @@ public abstract class Enemy : MonoBehaviour
     {
         yield return StartCoroutine(damageFlash.PlayDamageFlash());
 
+        //Add Explosion Effect
+        Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
+        SoundManager.PlaySound(SoundType.Explosion, 0.7f);
+
         //spawn gears
         for (int i = 0; i < gearsToSpawnOnDeath; i++)
-            Instantiate(gearPrefab, transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), transform.position.z), transform.rotation);
+            Instantiate(gearPrefab, transform.position + new Vector3(Random.Range(-spawnRadiusOnDeath, spawnRadiusOnDeath), Random.Range(-spawnRadiusOnDeath, spawnRadiusOnDeath), transform.position.z), transform.rotation);
 
         //spawn salvage cores
         if (Random.value <= salvageCoreDropChance)
         {
             for (int i = 0; i < salvageCoresToSpawnOnDeath; i++)
-                Instantiate(salvageCorePrefab, transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), transform.position.z), transform.rotation);
+                Instantiate(salvageCorePrefab, transform.position + new Vector3(Random.Range(-spawnRadiusOnDeath, spawnRadiusOnDeath), Random.Range(-spawnRadiusOnDeath, spawnRadiusOnDeath), transform.position.z), transform.rotation);
         }
             
         Destroy(gameObject);

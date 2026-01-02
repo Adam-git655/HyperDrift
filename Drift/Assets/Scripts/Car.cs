@@ -36,6 +36,7 @@ public class Car : MonoBehaviour
     public float driftMaxAngle = 60f;
     public float driftAngleBuildSpeed = 10f;
     public float driftAngleReturnSpeed = 5f;
+    public float driftRampIn = 3.5f;
 
     public float maxDriftSpeed = 1f;
     public float driftSpeedBoost = 2.5f;
@@ -82,6 +83,7 @@ public class Car : MonoBehaviour
     public bool isDrifting = false;
     private float driftChargeMeter = 0f;
     private readonly float maxDriftCharge = 100f;
+    private float driftInfluence = 0f;
 
     public float trackSegLength = .15f;
     private List<WheelTrack> m_WheelTracks;
@@ -261,9 +263,13 @@ public class Car : MonoBehaviour
         //Drift Direction
         float targetDriftAngle = 0f;
 
+        //Heavier drift entry
+        float targetDriftInfluence = isDrifting ? 1f : 0f;
+        driftInfluence = Mathf.Lerp(driftInfluence, targetDriftInfluence, driftRampIn * Time.deltaTime);
+
         if (isDrifting && Mathf.Abs(turnInput) > 0.1f)
         {
-            targetDriftAngle = turnInput * driftMaxAngle;
+            targetDriftAngle = turnInput * driftMaxAngle * driftInfluence;
             currentDriftSpeed = Mathf.Min(currentDriftSpeed + driftSpeedBoost * Time.deltaTime, maxDriftSpeed);
 
             if (!isInAttackMode)
@@ -314,6 +320,8 @@ public class Car : MonoBehaviour
 
         velDir.localEulerAngles = new Vector3(0, 0, Mathf.LerpAngle(velDir.localEulerAngles.z, targetDriftAngle, Time.deltaTime * driftAngleLerpSpeed));
 
+        attackModePressed = false;
+
         if (Vector3.Distance(transform.position, m_LastPos) > trackSegLength)
         {
             m_LastPos = transform.position;
@@ -330,8 +338,10 @@ public class Car : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Apply velocity in the drift direction
-        rb.velocity = currentDriftSpeed * m_AppliedSpeed * velDir.up;
+        // Apply velocity with directional inertia in the drift direction
+        Vector2 desiredVelocity = currentDriftSpeed * m_AppliedSpeed * velDir.up;
+        float velocityResponsiveness = isDrifting ? 9f : 12f;
+        rb.velocity = Vector2.Lerp(rb.velocity, desiredVelocity, velocityResponsiveness * Time.fixedDeltaTime);
     }
 
     private void OnMaxHealthChanged(float oldValue, float newValue)

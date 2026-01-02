@@ -89,7 +89,7 @@ public class MiniBoss : Enemy
         {
             Car car = collision.GetComponent<Car>();
 
-            if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
+            if (car.isInAttackMode && car.isDrifting && Mathf.Abs(car.turnInput) > 0.5f && car.canMove)
                 TakeDamage(car.stats.Damage.Value);
             else
                 car.TakeDamage(7f);
@@ -99,6 +99,13 @@ public class MiniBoss : Enemy
     protected override IEnumerator DoFinalFlashAndDie()
     {
         healthBarSlider.gameObject.SetActive(false);
-        return base.DoFinalFlashAndDie();
+        for (int i = 0; i < 10; ++i)
+        {
+            Instantiate(explosionEffectPrefab, transform.position + new Vector3(Random.Range(-spawnRadiusOnDeath, spawnRadiusOnDeath), Random.Range(-spawnRadiusOnDeath, spawnRadiusOnDeath)), Quaternion.identity);
+            SoundManager.PlaySound(SoundType.Explosion, 1.3f);
+            yield return new WaitForSeconds(0.07f);
+        }
+
+        yield return base.DoFinalFlashAndDie();
     }
 }

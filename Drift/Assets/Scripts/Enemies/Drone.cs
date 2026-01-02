@@ -77,7 +77,7 @@ public class Drone : Enemy
     {
         if (collision.CompareTag("Player"))
         {
-            if (car.isInAttackMode && car.isDrifting && car.canMove)
+            if (car.isInAttackMode && car.isDrifting && Mathf.Abs(car.turnInput) > 0.5f && car.canMove)
             {
                 TakeDamage(car.stats.Damage.Value);
             }

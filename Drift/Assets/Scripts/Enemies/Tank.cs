@@ -94,7 +94,7 @@ public class Tank : Enemy
     {
         if (collision.CompareTag("Player"))
         {
-            if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
+            if (car.isInAttackMode && car.isDrifting && Mathf.Abs(car.turnInput) > 0.5f && car.canMove)
             {
                 TakeDamage(car.stats.Damage.Value);
             }

@@ -239,7 +239,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4d2f4215e811dcd48803db960660e8e7, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.85660374, g: 0.85660374, b: 0.85660374, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -339,6 +339,8 @@ MonoBehaviour:
   floatingTextPrefab: {fileID: 2064094340062086010, guid: 648b831dec9efb147b0270b199ed33f1,
     type: 3}
   salvageCorePrefab: {fileID: 8324902611946007377, guid: 07488a5f02f1d2b49b750199873169a7,
+    type: 3}
+  explosionEffectPrefab: {fileID: 5166826540277232285, guid: b56de119951ce884b923ee9a37d152fd,
     type: 3}
   gearsToSpawnOnDeath: 3
   salvageCoreDropChance: 0.25

@@ -12,18 +12,24 @@ public class ButtonScript : MonoBehaviour
     private void Start()
     {
         originalScale = transform.localScale;
-        buttonText.SetActive(false);
+
+        if (buttonText != null )
+            buttonText.SetActive(false);
     }
 
     public void OnHover()
     {
         transform.localScale = hoverScale;
-        buttonText.SetActive(true);
+
+        if (buttonText != null)
+            buttonText.SetActive(true);
     }
 
     public void OnHoverExit()
     {
-        transform.localScale = originalScale; 
-        buttonText.SetActive(false);
+        transform.localScale = originalScale;
+
+        if (buttonText != null)
+            buttonText.SetActive(false);
     }
 }

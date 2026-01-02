@@ -59,7 +59,7 @@ public class Turret : Enemy
         if (collision.CompareTag("Player"))
         {
             Car car = collision.GetComponent<Car>();
-            if (car.isInAttackMode && car.isDrifting && (Mathf.Abs(car.turnInput) > 0.5f || collision.gameObject.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > 60f))
+            if (car.isInAttackMode && car.isDrifting && Mathf.Abs(car.turnInput) > 0.5f && car.canMove)
                 TakeDamage(car.stats.Damage.Value);
             else
                 car.TakeDamage(3f);
