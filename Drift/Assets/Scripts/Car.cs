@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public static class Globals
 {
@@ -42,6 +44,12 @@ public class Car : MonoBehaviour
     public float driftSpeedBoost = 2.5f;
     public float driftSpeedDecay = 5.0f;
 
+    [Header("Vignette")]
+    [SerializeField] private float maxVignetteIntesity = 0.5f;
+    [SerializeField] private float pulseStartThreshold = 0.25f;
+    [SerializeField] private float pulseSpeed = 8f;
+    [SerializeField] private float pulseStrength = 0.25f;
+
     [Header("References")]
     public GameObject attackModeButtonUI;
     public GameObject GameOverPanel;
@@ -61,6 +69,8 @@ public class Car : MonoBehaviour
     public AudioSource EngineAudioSource;
     public AudioSource DriftAudioSource;
     public PlayerWeapons weaponController;
+    public Volume postProccesingVolume;
+    private Vignette vignette;
 
     //Internals/States/Values
     private Rigidbody2D rb;
@@ -151,6 +161,9 @@ public class Car : MonoBehaviour
         carHealth = stats.MaxHealth.Value;
         driftMeterSlider.maxValue = maxDriftCharge;
         trailMaterial.color = Color.black;
+
+        if (!postProccesingVolume.profile.TryGet(out vignette))
+            Debug.LogError("Vignette effect not found in global volume");
 
         velDir = new GameObject("VelocityDirection").transform;
         velDir.parent = transform;
@@ -259,7 +272,7 @@ public class Car : MonoBehaviour
 
         transform.eulerAngles = new Vector3(0f, 0f, zVal);
 
-
+            
         //Drift Direction
         float targetDriftAngle = 0f;
 
@@ -304,11 +317,29 @@ public class Car : MonoBehaviour
         if (isInAttackMode)
         {
             attackModeTimer -= Time.deltaTime;
-            driftChargeMeter = (attackModeTimer / stats.AttackModeDuration.Value) * 100f;
+
+            float normalizedTime = Mathf.Clamp01(attackModeTimer / stats.AttackModeDuration.Value);
+
+            float vignetteIntensity = normalizedTime * maxVignetteIntesity;
+            
+            if (normalizedTime <= pulseStartThreshold)
+            {
+                float pulseT = 1f - (normalizedTime / pulseStartThreshold);
+
+                float pulse = Mathf.Sin(Time.time * pulseSpeed) * 0.5f + 0.5f;
+
+                vignetteIntensity += pulse * pulseStrength * pulseT;
+            }
+            
+            vignette.intensity.value = Mathf.Clamp01(vignetteIntensity);
+
+            driftChargeMeter = normalizedTime * 100f;
+
             if (attackModeTimer <= 0f)
             {
                 isInAttackMode = false;
                 driftChargeMeter = 0f;
+                vignette.intensity.value = 0f;
                 driftMeterSlider.fillRect.GetComponent<Image>().sprite = GreyEnergyBarSprite;
                 shieldAuraVfx.SetActive(false);
             }
@@ -426,6 +457,7 @@ public class Car : MonoBehaviour
     {
         isInAttackMode = true;
         shieldAuraVfx.SetActive(true);
+        vignette.intensity.value = 0.5f;
         attackModeTimer = stats.AttackModeDuration.Value;
     }
 
