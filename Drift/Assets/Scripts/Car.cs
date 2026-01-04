@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using Cinemachine;
 
 public static class Globals
 {
@@ -44,13 +45,18 @@ public class Car : MonoBehaviour
     public float driftSpeedBoost = 2.5f;
     public float driftSpeedDecay = 5.0f;
 
+    public float hyperDriftInstabilityChargeTime = 5f;
+    public float hyperDriftInstabilityTime = 3f;
+
     [Header("Vignette")]
     [SerializeField] private float maxVignetteIntesity = 0.5f;
     [SerializeField] private float pulseStartThreshold = 0.25f;
     [SerializeField] private float pulseSpeed = 8f;
     [SerializeField] private float pulseStrength = 0.25f;
+    [SerializeField] private Color hyperDriftVignetteColor;
 
     [Header("References")]
+    public CinemachineVirtualCamera followCam;
     public GameObject attackModeButtonUI;
     public GameObject GameOverPanel;
     public Text timeSurvivedCount;
@@ -78,6 +84,7 @@ public class Car : MonoBehaviour
     private float m_AppliedSpeed = 0;
     private float steerInput;
     public float turnInput;
+    private float hyperDriftInstabilityTimer = 0f;
 
     private float carHealth;
     private bool isGameOver = false;
@@ -271,8 +278,23 @@ public class Car : MonoBehaviour
         }
 
         transform.eulerAngles = new Vector3(0f, 0f, zVal);
+        
 
-            
+        //HyperDrift instability
+        if (turnInput == 1f || turnInput == -1f)
+        {
+            hyperDriftInstabilityTimer += Time.deltaTime;
+            if (hyperDriftInstabilityTimer >= hyperDriftInstabilityChargeTime)
+            {
+                StartCoroutine(HyperDriftInstability());
+                hyperDriftInstabilityTimer = 0f;
+            }
+        }
+        else
+        {
+            hyperDriftInstabilityTimer = 0f;
+        }
+
         //Drift Direction
         float targetDriftAngle = 0f;
 
@@ -330,7 +352,6 @@ public class Car : MonoBehaviour
 
                 vignetteIntensity += pulse * pulseStrength * pulseT;
             }
-            
             vignette.intensity.value = Mathf.Clamp01(vignetteIntensity);
 
             driftChargeMeter = normalizedTime * 100f;
@@ -457,8 +478,32 @@ public class Car : MonoBehaviour
     {
         isInAttackMode = true;
         shieldAuraVfx.SetActive(true);
+        vignette.color.Override(hyperDriftVignetteColor);
         vignette.intensity.value = 0.5f;
         attackModeTimer = stats.AttackModeDuration.Value;
+    }
+
+    private IEnumerator HyperDriftInstability()
+    {
+        canMove = false;
+        CameraNoise(1f, 3f);
+        vignette.color.Override(Color.red);
+        vignette.intensity.value = 0.3f;
+        SoundManager.PlaySound(SoundType.OverHeat);
+
+        yield return new WaitForSeconds(hyperDriftInstabilityTime);
+
+        canMove = true;
+        CameraNoise(0f, 0f);
+        vignette.color.Override(hyperDriftVignetteColor);
+        vignette.intensity.value = 0f;
+    }
+
+    public void CameraNoise(float amplitudeGain, float frequencyGain)
+    {
+        CinemachineBasicMultiChannelPerlin noise = followCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+        noise.m_AmplitudeGain = amplitudeGain;
+        noise.m_FrequencyGain = frequencyGain;
     }
 
     public void GetElectrocuted()
@@ -467,6 +512,7 @@ public class Car : MonoBehaviour
         carHealth -= 5;
         ElectricShockFx.gameObject.SetActive(true);
         ElectricShockFx.Play();
+        SoundManager.PlayLoopSound(SoundType.ElectricShock);
         StartCoroutine(RegainControlsAfterElectricShock());
     }
 
@@ -475,6 +521,8 @@ public class Car : MonoBehaviour
         yield return new WaitForSeconds(2f);
         ElectricShockFx.gameObject.SetActive(false);
         ElectricShockFx.Pause();
+        if (SoundManager.IsLooping(SoundType.ElectricShock))
+            SoundManager.StopLoopSound(SoundType.ElectricShock);
         canMove = true;
     }
 

@@ -23,7 +23,7 @@ public class Bullet : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             Car car = collision.gameObject.GetComponent<Car>();
-            if (car.isInAttackMode && car.isDrifting && Mathf.Abs(car.turnInput) > 0.5f)
+            if (car.isInAttackMode && car.isDrifting && car.canMove)
             {
                 Destroy(gameObject);
             }

@@ -592,7 +592,7 @@ MonoBehaviour:
       type: 3}
     baseAmountPerSpawn: 1
     maxExtraEnemiesPerSpawn: 1
-    baseSpawnInterval: 25
+    baseSpawnInterval: 30
     spawnDistance: 10
     spawnStartTime: 70
     spawnTimer: 0
@@ -618,6 +618,8 @@ MonoBehaviour:
     y: -31.5
     width: 115.1
     height: 59.43
+  dronePrefab: {fileID: 262976146203748613, guid: eda2bd6900ec83f4fb065faaf36bfbed,
+    type: 3}
   difficultyRampUpTime: 200
   minSpawnIntervalMultiplier: 0.3
 --- !u!4 &163235229
@@ -1104,6 +1106,7 @@ GameObject:
   - component: {fileID: 383980439}
   - component: {fileID: 383980441}
   - component: {fileID: 383980440}
+  - component: {fileID: 383980442}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -1181,6 +1184,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &383980442
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383980438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  m_PivotOffset: {x: 0, y: 0, z: 0}
+  m_AmplitudeGain: 0
+  m_FrequencyGain: 0
+  mNoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &387134364
 GameObject:
   m_ObjectHideFlags: 0
@@ -3599,6 +3619,14 @@ MonoBehaviour:
     volume: 1
     sounds:
     - {fileID: 8300000, guid: 59adcb96b73202a4db66a4deb40cb928, type: 3}
+  - name: ElectricShock
+    volume: 1
+    sounds:
+    - {fileID: 8300000, guid: dfb1451dfb7962944b7cb11d9c9ce462, type: 3}
+  - name: OverHeat
+    volume: 1
+    sounds:
+    - {fileID: 8300000, guid: 9ae9b4a3ca424b841b0346d8b4279bd8, type: 3}
 --- !u!82 &1088059045
 AudioSource:
   m_ObjectHideFlags: 0
@@ -710421,6 +710449,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
         type: 3}
+      propertyPath: followCam
+      value: 
+      objectReference: {fileID: 916833145}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
       propertyPath: pulseSpeed
       value: 10
       objectReference: {fileID: 0}
@@ -710566,6 +710599,21 @@ PrefabInstance:
       propertyPath: steeringWheelController
       value: 
       objectReference: {fileID: 2043065132}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
+      propertyPath: hyperDriftVignetteColor.b
+      value: 0.9647059
+      objectReference: {fileID: 0}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
+      propertyPath: hyperDriftVignetteColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
+      propertyPath: hyperDriftVignetteColor.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
         type: 3}
       propertyPath: salvageCoresCollectedCountOnDeathText
@@ -711155,6 +711203,7 @@ MonoBehaviour:
   - {fileID: 783631480}
   waitTimePostPopup: 3
   enemySpawner: {fileID: 163235227}
+  dronePrefab: {fileID: 0}
   car: {fileID: 2069244331}
   clickAction: {fileID: -1989553775991456770, guid: 737cc777b17a226428ca051d8b6cc7f8,
     type: 3}

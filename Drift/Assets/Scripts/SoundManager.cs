@@ -9,7 +9,9 @@ public enum SoundType
     CarDamage,
     BulletFire,
     ShockWave,
-    Explosion
+    Explosion,
+    ElectricShock,
+    OverHeat
 }
 
 [RequireComponent(typeof(AudioSource)), ExecuteInEditMode]
@@ -18,6 +20,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private SoundList[] soundList;
     private static SoundManager instance;
     private AudioSource audioSource;
+    private Dictionary<SoundType, AudioSource> loopingSources = new Dictionary<SoundType, AudioSource>();
 
     private void Awake()
     {
@@ -34,6 +37,37 @@ public class SoundManager : MonoBehaviour
         AudioClip[] clips = soundList.Sounds;
         AudioClip randomClip = clips[UnityEngine.Random.Range(0, clips.Length)];
         instance.audioSource.PlayOneShot(randomClip, volume * soundList.volume);
+    }
+
+    public static void PlayLoopSound(SoundType sound, float volume = 1)
+    {
+        if (instance.loopingSources.ContainsKey(sound))
+            return;
+
+        SoundList soundList = instance.soundList[(int)sound];
+        AudioClip clip = soundList.Sounds[UnityEngine.Random.Range(0, soundList.Sounds.Length)];
+        AudioSource loopSource = instance.gameObject.AddComponent<AudioSource>();
+        loopSource.clip = clip;
+        loopSource.volume = volume * soundList.volume;
+        loopSource.loop = true;
+        loopSource.Play();
+
+        instance.loopingSources.Add(sound, loopSource);
+    }
+
+    public static void StopLoopSound(SoundType sound)
+    {
+        if (!instance.loopingSources.ContainsKey(sound))
+            return;
+
+        AudioSource src = instance.loopingSources[sound];
+        src.Stop();
+        Destroy(src);
+        instance.loopingSources.Remove(sound);
+    }
+    public static bool IsLooping(SoundType sound)
+    {
+        return instance.loopingSources.ContainsKey(sound);
     }
 
 #if UNITY_EDITOR

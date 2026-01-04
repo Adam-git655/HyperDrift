@@ -8,6 +8,7 @@ public class TutorialManager : MonoBehaviour
     public GameObject[] TutorialPopUpPanels;
     public float waitTimePostPopup = 5f;
     public GameObject enemySpawner;
+    public GameObject dronePrefab;
     public Car car;
 
     public InputActionReference clickAction;
@@ -70,8 +71,6 @@ public class TutorialManager : MonoBehaviour
         //dont allow enemies to spawn before tutorial finishes
         enemySpawner.SetActive(false);
 
-        yield return new WaitForSeconds(waitTimePostPopup);
-
         while (popUpIndex < TutorialPopUpPanels.Length)
         {
             //pause game and show popup
@@ -121,6 +120,7 @@ public class TutorialManager : MonoBehaviour
                 break;
 
             case Actions.ActivateHyperDrift:
+                enemySpawner.GetComponent<EnemySpawner>().SpawnDronesForTutorial(5);
                 while(!hyperDriftAction.action.WasPerformedThisFrame())
                     yield return null;
                 break;

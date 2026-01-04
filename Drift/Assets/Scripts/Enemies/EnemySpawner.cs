@@ -28,10 +28,17 @@ public class EnemySpawner : MonoBehaviour
     public Rect spawnableArea;
     private Camera mainCam;
 
+    public GameObject dronePrefab;
+
     [Header("Difficulty Scaling")]
     public float difficultyRampUpTime = 150f;
     public float minSpawnIntervalMultiplier = 0.3f;
 
+    private void Awake()
+    {
+        if (mainCam == null)
+            mainCam = Camera.main;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -39,7 +46,7 @@ public class EnemySpawner : MonoBehaviour
         if (mainCam == null)
             mainCam = Camera.main;
 
-        foreach(var enemy in enemyTypes)
+        foreach (var enemy in enemyTypes)
         {
             enemy.spawnTimer = 0f;
             enemy.currentSpawnInterval = enemy.baseSpawnInterval;
@@ -84,6 +91,15 @@ public class EnemySpawner : MonoBehaviour
         {
             Vector2 spawnPos = GetRandomPointOutsideCamView(enemy.spawnDistance);
             Instantiate(enemy.enemyPrefab, spawnPos, Quaternion.identity);
+        }
+    }
+
+    public void SpawnDronesForTutorial(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            Vector2 spawnPos = GetRandomPointOutsideCamView(4f);
+            Instantiate(dronePrefab, spawnPos, Quaternion.identity);
         }
     }
 
