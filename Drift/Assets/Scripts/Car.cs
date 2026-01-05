@@ -17,6 +17,8 @@ public static class Globals
     public static PlayerMetaProgressionStats playerMeta = new PlayerMetaProgressionStats();
     public static int totalSalvageCores = 0;
 
+    public static int enemiesKilled = 0;
+
     public static void StartGameplayTimer()
     {
         gameplayTime = 0f;

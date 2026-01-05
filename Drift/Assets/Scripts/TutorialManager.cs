@@ -23,6 +23,8 @@ public class TutorialManager : MonoBehaviour
         Steer,
         Drift,
         ActivateHyperDrift,
+        SpawnEnemies,
+        PickUpGear,
         NoActionReq
     }
 
@@ -49,7 +51,7 @@ public class TutorialManager : MonoBehaviour
         foreach (var popUp in TutorialPopUpPanels)
             popUp.SetActive(false);
 
-        //PlayerPrefs.DeleteKey("HasLaunched"); // for debugging and testing purposes
+        PlayerPrefs.DeleteKey("HasLaunched"); // for debugging and testing purposes
 
         //Check if game opened for first time
         if (PlayerPrefs.GetInt("HasLaunched", 0) == 0)
@@ -120,8 +122,18 @@ public class TutorialManager : MonoBehaviour
                 break;
 
             case Actions.ActivateHyperDrift:
-                enemySpawner.GetComponent<EnemySpawner>().SpawnDronesForTutorial(5);
                 while(!hyperDriftAction.action.WasPerformedThisFrame())
+                    yield return null;
+                break;
+
+            case Actions.SpawnEnemies:
+                enemySpawner.GetComponent<EnemySpawner>().SpawnDronesForTutorial(5);
+                while (Globals.enemiesKilled <= 0)
+                    yield return null;
+                break;
+
+            case Actions.PickUpGear:
+                while (GearGaugeManager.Instance.currentGearExp <= 0)
                     yield return null;
                 break;
 

@@ -102,7 +102,8 @@ public abstract class Enemy : MonoBehaviour
             for (int i = 0; i < salvageCoresToSpawnOnDeath; i++)
                 Instantiate(salvageCorePrefab, transform.position + new Vector3(Random.Range(-spawnRadiusOnDeath, spawnRadiusOnDeath), Random.Range(-spawnRadiusOnDeath, spawnRadiusOnDeath), transform.position.z), transform.rotation);
         }
-            
+
+        Globals.enemiesKilled++;
         Destroy(gameObject);
     }
 }

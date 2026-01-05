@@ -4331,7 +4331,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4a91cb6a7fb43854dae5ee2622dd647e, type: 2}
+  - {fileID: 2100000, guid: a6662bd71b6318a47a2a5999628d2b7e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -711213,7 +711213,7 @@ MonoBehaviour:
     type: 3}
   hyperDriftAction: {fileID: -7395677575475274714, guid: 737cc777b17a226428ca051d8b6cc7f8,
     type: 3}
-  requiredActions: 0000000001000000030000000200000003000000030000000300000003000000
+  requiredActions: 0000000001000000050000000200000003000000040000000500000005000000
 --- !u!4 &2116642807
 Transform:
   m_ObjectHideFlags: 0

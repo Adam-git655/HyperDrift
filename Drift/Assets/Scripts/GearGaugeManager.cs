@@ -8,7 +8,7 @@ public class GearGaugeManager : MonoBehaviour
 {
     public static GearGaugeManager Instance;
     public Slider gearGauge;
-    [SerializeField] private int currentGearExp = 0;
+    public int currentGearExp = 0;
     [SerializeField] private int maxGearExp = 20;
     [SerializeField] private int maxGearExpIncrease = 20;
     [SerializeField] private int currentLevel = 1;
