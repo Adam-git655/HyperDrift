@@ -6,7 +6,8 @@ public enum WeaponType
 { 
     FireTrail,
     Grinders,
-    EMPPulse
+    EMPPulse,
+    InertiaShield
 }
 
 

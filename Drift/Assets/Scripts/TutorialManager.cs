@@ -51,7 +51,7 @@ public class TutorialManager : MonoBehaviour
         foreach (var popUp in TutorialPopUpPanels)
             popUp.SetActive(false);
 
-        PlayerPrefs.DeleteKey("HasLaunched"); // for debugging and testing purposes
+        //PlayerPrefs.DeleteKey("HasLaunched"); // for debugging and testing purposes
 
         //Check if game opened for first time
         if (PlayerPrefs.GetInt("HasLaunched", 0) == 0)

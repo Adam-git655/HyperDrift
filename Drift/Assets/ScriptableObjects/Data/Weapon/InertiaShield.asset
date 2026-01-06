@@ -9,14 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4073ad1d09462274bb5aeb3a0dbad02b, type: 3}
-  m_Name: PlayerBaseStats
+  m_Script: {fileID: 11500000, guid: b73e7370c49d39e4da8948e659e51e0d, type: 3}
+  m_Name: InertiaShield
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  maxSpeed: 6
-  attackModeDuration: 10
-  pickupRange: 2
-  damage: 10
-  damageReduction: 0
-  driftChargeRate: 15
-  driftSegmentCount: 70
+  baseDamage: 0
+  baseCooldown: 0
+  shieldTime: 1

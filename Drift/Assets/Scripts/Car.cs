@@ -89,6 +89,7 @@ public class Car : MonoBehaviour
     private float hyperDriftInstabilityTimer = 0f;
 
     private float carHealth;
+    public bool canTakeDamage = true;
     private bool isGameOver = false;
 
     private bool attackModePressed;
@@ -365,6 +366,12 @@ public class Car : MonoBehaviour
                 vignette.intensity.value = 0f;
                 driftMeterSlider.fillRect.GetComponent<Image>().sprite = GreyEnergyBarSprite;
                 shieldAuraVfx.SetActive(false);
+
+                if (weaponController.ActiveWeapons.TryGetValue(WeaponType.InertiaShield, out Weapon value))
+                {
+                    InertiaShieldWeapon weapon = value as InertiaShieldWeapon;
+                    StartCoroutine(weapon.Activate());
+                }
             }
         }
 
@@ -424,6 +431,9 @@ public class Car : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        if (!canTakeDamage)
+            return;
+        
         float reductionPercent = stats.DamageReduction.Value;
         reductionPercent = Mathf.Clamp(reductionPercent, 0f, 0.9f);
         float finalDamage = damage * (1f - reductionPercent);
