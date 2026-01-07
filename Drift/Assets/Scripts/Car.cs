@@ -32,23 +32,57 @@ public class Car : MonoBehaviour
     public PlayerBaseStats baseStats;
     public PlayerStatsRuntime stats;
     public int salvageCores = 0;
+
     [Header("Speed")]
-    public float accelerationTime = 1.2f; //seconds to reach max speed
+    [Tooltip("seconds to reach max speed")]
+    public float accelerationTime = 1.2f;
+
+    [Tooltip("seconds to reach 0 speed")]
     public float decelRate = 4f;
+
+    [Tooltip("Number of degrees car's nose turns every second during normal driving")]
     public float rotateDegreesPerSec = 220f;
 
     [Header("Drifting")]
+    [Tooltip("Maximum sideways angle car can point inwards")]
     public float driftMaxAngle = 60f;
+
+    [Tooltip("Speed of nose swinging away from default")]
     public float driftAngleBuildSpeed = 10f;
+
+    [Tooltip("Speed of nose swining back to default")]
     public float driftAngleReturnSpeed = 5f;
+
+    [Tooltip("Smoothing factor, easing the car in to the drift (avoid jerk when starting drift)")]
     public float driftRampIn = 3.5f;
 
+    [Tooltip("Speed Limit when you are drifting")]
     public float maxDriftSpeed = 1f;
+
+    [Tooltip("Extra speed added to the car when drifiting")]
     public float driftSpeedBoost = 2.5f;
+
+    [Tooltip("How fast you lose built up speed once drift ends")]
     public float driftSpeedDecay = 5.0f;
 
+    [Tooltip("How many seconds you can turn in one direction constantly before overheating")]
     public float hyperDriftInstabilityChargeTime = 5f;
+
+    [Tooltip("How many seconds your car overheats for")]
     public float hyperDriftInstabilityTime = 3f;
+
+    [Header("Drift Control")]
+    [Tooltip("How fast the drift tightens from wide to sharp (0 to 1 in X seconds)")]
+    public float driftTightenRate = 0.8f;
+
+    [Tooltip("The starting percentage of the drift angle (0.3 = starts at 30% of max angle)")]
+    public float minDriftAngleRatio = 0.3f;
+
+    [Tooltip("Rotation multiplier at the START of a drift (Wide loop)")]
+    public float startDriftRotateMult = 1.1f;
+
+    [Tooltip("Rotation multiplier at MAX tightness (Tight loop)")]
+    public float maxDriftRotateMult = 2.4f;
 
     [Header("Vignette")]
     [SerializeField] private float maxVignetteIntesity = 0.5f;
@@ -78,6 +112,7 @@ public class Car : MonoBehaviour
     public AudioSource DriftAudioSource;
     public PlayerWeapons weaponController;
     public Volume postProccesingVolume;
+    public SteeringWheelController steeringWheelController;
     private Vignette vignette;
 
     //Internals/States/Values
@@ -104,6 +139,8 @@ public class Car : MonoBehaviour
     private float driftChargeMeter = 0f;
     private readonly float maxDriftCharge = 100f;
     private float driftInfluence = 0f;
+    private float driftTightness = 0f; // Internal tracker (0.0 to 1.0)
+    private float lastDriftDir = 0f;
 
     public float trackSegLength = .15f;
     private List<WheelTrack> m_WheelTracks;
@@ -111,8 +148,6 @@ public class Car : MonoBehaviour
 
     //Controls/Input
     private CarControls controls;
-    public SteeringWheelController steeringWheelController;
-    public InputAction AnyKey;
 
     private void Awake()
     {
@@ -248,7 +283,7 @@ public class Car : MonoBehaviour
         
         ManageSound();
 
-        //Movement
+        //Speed
         float accel = stats.MaxSpeed.Value / accelerationTime;
         float targetSpeed = canMove ? stats.MaxSpeed.Value : 0f;
         float rate = canMove ? accel : decelRate;
@@ -264,6 +299,27 @@ public class Car : MonoBehaviour
         if (m_AppliedSpeed < .5f)
             velDir.localEulerAngles = Vector3.zero;
 
+        //record current dir
+        float currentDir = Mathf.Abs(turnInput) > 0.1f ? Mathf.Sign(turnInput) : 0f;
+
+        // If we switched directions (e.g., went from Left to Right) while drifting
+        if (isDrifting && currentDir != 0 && currentDir != lastDriftDir)
+        {
+            // Reset tightness to 0 so the new direction starts wide
+            driftTightness = 0f;
+        }
+
+        // Update the last direction tracker
+        if (currentDir != 0) lastDriftDir = currentDir;
+
+        // Logic for ramping tightness up or down
+        float targetTightness = (isDrifting && currentDir != 0) ? 1f : 0f;
+        float currentRampSpeed = (targetTightness > driftTightness) ? driftTightenRate : driftTightenRate * 2.0f;
+        driftTightness = Mathf.MoveTowards(driftTightness, targetTightness, currentRampSpeed * Time.deltaTime);
+
+        float currentRotateMult = Mathf.Lerp(startDriftRotateMult, maxDriftRotateMult, driftTightness);
+        float currentAngleRatio = Mathf.Lerp(minDriftAngleRatio, 1f, driftTightness);
+
         //Rotation
         float zVal = transform.eulerAngles.z;
 
@@ -272,7 +328,7 @@ public class Car : MonoBehaviour
             if (!isDrifting)
                 zVal += rotateDegreesPerSec * Time.deltaTime * -turnInput * Mathf.Clamp01(m_AppliedSpeed / stats.MaxSpeed.Value);
             else
-                zVal += rotateDegreesPerSec * 2.3f * Time.deltaTime * -turnInput * Mathf.Clamp01(m_AppliedSpeed / stats.MaxSpeed.Value);
+                zVal += rotateDegreesPerSec * currentRotateMult * Time.deltaTime * -turnInput * Mathf.Clamp01(m_AppliedSpeed / stats.MaxSpeed.Value);
         }
         else
         {
@@ -307,82 +363,28 @@ public class Car : MonoBehaviour
 
         if (isDrifting && Mathf.Abs(turnInput) > 0.1f)
         {
-            targetDriftAngle = turnInput * driftMaxAngle * driftInfluence;
-            currentDriftSpeed = Mathf.Min(currentDriftSpeed + driftSpeedBoost * Time.deltaTime, maxDriftSpeed);
+            //angle
+            targetDriftAngle = turnInput * (driftMaxAngle * currentAngleRatio) * driftInfluence;
 
-            if (!isInAttackMode)
-            {
-                driftChargeMeter += stats.DriftChargeRate.Value * Time.deltaTime;
-                driftChargeMeter = Mathf.Min(driftChargeMeter, maxDriftCharge);
-            }
+            //drift speed boost
+            currentDriftSpeed = Mathf.Min(currentDriftSpeed + driftSpeedBoost * Time.deltaTime, maxDriftSpeed);
         }
         else
         {
+            //drift speed decay
             currentDriftSpeed = Mathf.Lerp(currentDriftSpeed, 1f, Time.deltaTime * driftSpeedDecay);
         }
 
-        driftMeterSlider.value = driftChargeMeter;
-
-        if (driftChargeMeter >= maxDriftCharge && !isInAttackMode)
-        {
-            driftMeterSlider.fillRect.GetComponent<Image>().sprite = BlueEnergyBarSprite;
-
-#if UNITY_ANDROID || UNITY_IOS
-            attackModeButtonUI.SetActive(true);
-#endif
-
-            if (attackModePressed && canMove)
-            {
-                ActivateAttackMode();
-                attackModePressed = false;
-                attackModeButtonUI.SetActive(false);
-            }
-        }
-
-        if (isInAttackMode)
-        {
-            attackModeTimer -= Time.deltaTime;
-
-            float normalizedTime = Mathf.Clamp01(attackModeTimer / stats.AttackModeDuration.Value);
-
-            float vignetteIntensity = normalizedTime * maxVignetteIntesity;
-            
-            if (normalizedTime <= pulseStartThreshold)
-            {
-                float pulseT = 1f - (normalizedTime / pulseStartThreshold);
-
-                float pulse = Mathf.Sin(Time.time * pulseSpeed) * 0.5f + 0.5f;
-
-                vignetteIntensity += pulse * pulseStrength * pulseT;
-            }
-            vignette.intensity.value = Mathf.Clamp01(vignetteIntensity);
-
-            driftChargeMeter = normalizedTime * 100f;
-
-            if (attackModeTimer <= 0f)
-            {
-                isInAttackMode = false;
-                driftChargeMeter = 0f;
-                vignette.intensity.value = 0f;
-                driftMeterSlider.fillRect.GetComponent<Image>().sprite = GreyEnergyBarSprite;
-                shieldAuraVfx.SetActive(false);
-
-                if (weaponController.ActiveWeapons.TryGetValue(WeaponType.InertiaShield, out Weapon value))
-                {
-                    InertiaShieldWeapon weapon = value as InertiaShieldWeapon;
-                    StartCoroutine(weapon.Activate());
-                }
-            }
-        }
-
+        //clamp speed
         currentDriftSpeed = Mathf.Clamp(currentDriftSpeed, 1.0f, maxDriftSpeed);
 
-        float driftAngleLerpSpeed = isDrifting ? driftAngleBuildSpeed : driftAngleReturnSpeed;
-
+        //lerp drift angle
+        float driftAngleLerpSpeed = isDrifting ? driftAngleBuildSpeed : driftAngleReturnSpeed; 
         velDir.localEulerAngles = new Vector3(0, 0, Mathf.LerpAngle(velDir.localEulerAngles.z, targetDriftAngle, Time.deltaTime * driftAngleLerpSpeed));
 
-        attackModePressed = false;
+        HandleHyperDriftLogic();
 
+        //Handle drift trail generation
         if (Vector3.Distance(transform.position, m_LastPos) > trackSegLength)
         {
             m_LastPos = transform.position;
@@ -485,6 +487,77 @@ public class Car : MonoBehaviour
         }
     }
 
+    private void HandleHyperDriftLogic()
+    {
+        if (isDrifting && Mathf.Abs(turnInput) > 0.1f)
+        {
+            //drift charge meter icnrease
+            if (!isInAttackMode)
+            {
+                driftChargeMeter += stats.DriftChargeRate.Value * Time.deltaTime;
+                driftChargeMeter = Mathf.Min(driftChargeMeter, maxDriftCharge);
+            }
+        }
+        driftMeterSlider.value = driftChargeMeter;
+
+
+        //when drift charge meter is full
+        if (driftChargeMeter >= maxDriftCharge && !isInAttackMode)
+        {
+            driftMeterSlider.fillRect.GetComponent<Image>().sprite = BlueEnergyBarSprite;
+
+#if UNITY_ANDROID || UNITY_IOS
+            attackModeButtonUI.SetActive(true);
+#endif
+            //if space pressed when drift charge full then activate hyperdrift
+            if (attackModePressed && canMove)
+            {
+                ActivateAttackMode();
+                attackModePressed = false;
+                attackModeButtonUI.SetActive(false);
+            }
+        }
+        
+        //When in hyperdrift do this
+        if (isInAttackMode)
+        {
+            attackModeTimer -= Time.deltaTime;
+
+            float normalizedTime = Mathf.Clamp01(attackModeTimer / stats.AttackModeDuration.Value);
+
+            float vignetteIntensity = normalizedTime * maxVignetteIntesity;
+
+            if (normalizedTime <= pulseStartThreshold)
+            {
+                float pulseT = 1f - (normalizedTime / pulseStartThreshold);
+
+                float pulse = Mathf.Sin(Time.time * pulseSpeed) * 0.5f + 0.5f;
+
+                vignetteIntensity += pulse * pulseStrength * pulseT;
+            }
+            vignette.intensity.value = Mathf.Clamp01(vignetteIntensity);
+
+            driftChargeMeter = normalizedTime * 100f;
+
+            if (attackModeTimer <= 0f)
+            {
+                isInAttackMode = false;
+                driftChargeMeter = 0f;
+                vignette.intensity.value = 0f;
+                driftMeterSlider.fillRect.GetComponent<Image>().sprite = GreyEnergyBarSprite;
+                shieldAuraVfx.SetActive(false);
+
+                if (weaponController.ActiveWeapons.TryGetValue(WeaponType.InertiaShield, out Weapon value))
+                {
+                    InertiaShieldWeapon weapon = value as InertiaShieldWeapon;
+                    StartCoroutine(weapon.Activate());
+                }
+            }
+        }
+
+        //avoid double input
+        attackModePressed = false;
+    }
 
     private void ActivateAttackMode()
     {

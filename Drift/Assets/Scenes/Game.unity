@@ -710530,6 +710530,11 @@ PrefabInstance:
       objectReference: {fileID: 1503834182}
     - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
         type: 3}
+      propertyPath: driftTightenRate
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
       propertyPath: salvageCoresCount
       value: 
       objectReference: {fileID: 172404863}
@@ -710552,6 +710557,16 @@ PrefabInstance:
         type: 3}
       propertyPath: attackModeDuration
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
+      propertyPath: maxDriftRotateMult
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
+      propertyPath: minDriftAngleRatio
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
         type: 3}
@@ -710592,6 +710607,11 @@ PrefabInstance:
       objectReference: {fileID: 454968072}
     - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
         type: 3}
+      propertyPath: startDriftRotateMult
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
       propertyPath: driftAngleReturnSpeed
       value: 6
       objectReference: {fileID: 0}
@@ -710614,6 +710634,11 @@ PrefabInstance:
         type: 3}
       propertyPath: hyperDriftVignetteColor.r
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
+        type: 3}
+      propertyPath: hyperDriftInstabilityChargeTime
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 114586914066387858, guid: 545816ba7c4181a449771b82b3b2f0b2,
         type: 3}

@@ -17,6 +17,8 @@ public class InertiaShieldWeapon : Weapon
         car = GetComponentInParent<Car>();
         inertiaShieldWeaponData = (InertiaShieldWeaponData) data;
         shieldTime = inertiaShieldWeaponData.shieldTime;
+        shieldVisual.SetActive(false);
+        car.canTakeDamage = true;
     }
 
     protected override void Fire()
