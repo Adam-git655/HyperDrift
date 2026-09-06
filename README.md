@@ -21,4 +21,4 @@ HyperDrift is a top-down 2D Vehicular combat roguelite inspired by vampire survi
 I was responsible for the entire programming and technical implementation of the game, including all gameplay systems and mechanics. My partner focused on game design, developing the core idea, and playtesting to refine the game.
 
 ## Play now on itch.io!
-https://randomguy123hehe.itch.io/hyperdrift
+https://adam178.itch.io/hyperdrift
